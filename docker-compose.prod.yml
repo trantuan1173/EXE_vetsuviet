@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: vsv-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: vetsuviet
+    networks:
+      - vsv-network
+
+  backend:
+    image: ghcr.io/trantuan1173/vsv-backend:latest
+    container_name: vsv-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      PORT: 5678
+      MONGO_URI: mongodb://mongo:27017/vetsuviet
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      NODE_ENV: production
+      CLIENT_URL: http://localhost
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_FULL_NAME: ${ADMIN_FULL_NAME}
+    ports:
+      - "5678:5678"
+    networks:
+      - vsv-network
+
+  frontend:
+    image: ghcr.io/trantuan1173/vsv-frontend:latest
+    container_name: vsv-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - vsv-network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  vsv-network:
+    driver: bridge

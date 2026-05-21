@@ -1,0 +1,15 @@
+# ── Stage: production ───────────────────────────────────────
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Install dependencies first (layer caching)
+COPY package.json ./
+RUN npm install --omit=dev && npm cache clean --force
+
+# Copy source
+COPY . .
+
+EXPOSE 5678
+
+CMD ["node", "server.js"]

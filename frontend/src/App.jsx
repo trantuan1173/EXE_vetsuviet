@@ -19,9 +19,15 @@ import Shop from './pages/Shop';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import UserProfile from './pages/UserProfile';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminPlaceholder from './pages/AdminPlaceholder';
 import NotFound from './pages/NotFound';
+
+// Admin Pages
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUsers from './pages/AdminUsers';
+import AdminProducts from './pages/AdminProducts';
+import AdminOrders from './pages/AdminOrders';
+import AdminCourses from './pages/AdminCourses';
+import AdminQuizzes from './pages/AdminQuizzes';
 
 function App() {
   return (
@@ -85,7 +91,7 @@ function App() {
                 path="/admin/courses"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AdminPlaceholder title="Khóa học" icon="📚" />
+                    <AdminCourses />
                   </ProtectedRoute>
                 }
               />
@@ -93,7 +99,7 @@ function App() {
                 path="/admin/quizzes"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AdminPlaceholder title="Quiz" icon="❓" />
+                    <AdminQuizzes />
                   </ProtectedRoute>
                 }
               />
@@ -101,7 +107,7 @@ function App() {
                 path="/admin/products"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AdminPlaceholder title="Sản phẩm" icon="🛒" />
+                    <AdminProducts />
                   </ProtectedRoute>
                 }
               />
@@ -109,7 +115,7 @@ function App() {
                 path="/admin/orders"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AdminPlaceholder title="Đơn hàng" icon="📦" />
+                    <AdminOrders />
                   </ProtectedRoute>
                 }
               />
@@ -117,7 +123,7 @@ function App() {
                 path="/admin/users"
                 element={
                   <ProtectedRoute requireAdmin>
-                    <AdminPlaceholder title="Người dùng" icon="👥" />
+                    <AdminUsers />
                   </ProtectedRoute>
                 }
               />

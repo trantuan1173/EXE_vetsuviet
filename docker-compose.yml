@@ -1,0 +1,84 @@
+version: "3.8"
+
+# ═══════════════════════════════════════════════════════════
+#  Vết Sử Việt — Docker Compose
+#  Gồm 3 services: MongoDB, Backend (Express), Frontend (Nginx)
+#
+#  Cách chạy:
+#    docker compose up -d --build
+#
+#  Truy cập:
+#    - Frontend:  http://localhost
+#    - API:       http://localhost/api
+#    - API docs:  http://localhost/api/docs
+#    - MongoDB:   localhost:27017
+# ═══════════════════════════════════════════════════════════
+
+services:
+  # ── MongoDB ─────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: vsv-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: vetsuviet
+    networks:
+      - vsv-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend (Node / Express) ────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vsv-backend
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 5678
+      MONGO_URI: mongodb://mongo:27017/vetsuviet
+      JWT_SECRET: ${JWT_SECRET:-vetsuviet_jwt_secret_change_me}
+      JWT_EXPIRES_IN: 7d
+      NODE_ENV: production
+      CLIENT_URL: http://localhost
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@vetsuviet.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@123}
+      ADMIN_FULL_NAME: ${ADMIN_FULL_NAME:-Vết Sử Việt Admin}
+    networks:
+      - vsv-network
+
+  # ── Frontend (React + Nginx) ────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: vsv-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - vsv-network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  vsv-network:
+    driver: bridge
