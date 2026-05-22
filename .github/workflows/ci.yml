@@ -196,13 +196,13 @@ jobs:
             set -e
             cd /home/tuanta/Project/vetsuviet
 
-            # Docker Compose sẽ TỰ ĐỘNG nhặt file .env đang nằm sẵn ở thư mục này
+            # Pull latest images
             docker compose -f docker-compose.prod.yml pull
 
-            # Restart ứng dụng với zero-downtime
+            # Restart with zero-downtime
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
 
-            # Dọn dẹp các image cũ để tránh đầy ổ cứng server
+            # Cleanup old images
             docker image prune -f
 
             echo "✅ Deployment successful at $(date)"
