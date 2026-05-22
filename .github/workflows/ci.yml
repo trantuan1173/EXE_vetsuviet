@@ -172,9 +172,9 @@ jobs:
           script: |
             set -e
             
-            mkdir -p /Project/vetsuviet
+            mkdir -p /home/tuanta/Project/vetsuviet
             
-            cd /Project/vetsuviet
+            cd /home/tuanta/Project/vetsuviet
 
             # Pull latest images
             docker compose -f docker-compose.prod.yml pull
