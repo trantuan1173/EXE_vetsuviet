@@ -47,7 +47,7 @@ services:
       mongo:
         condition: service_healthy
     environment:
-      PORT: 5678
+      PORT: 3456
       MONGO_URI: mongodb://mongo:27017/vetsuviet
       JWT_SECRET: ${JWT_SECRET:-vetsuviet_jwt_secret_change_me}
       JWT_EXPIRES_IN: 7d
