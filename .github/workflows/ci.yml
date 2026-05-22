@@ -171,6 +171,9 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -e
+            
+            mkdir -p /Project/vetsuviet
+            
             cd /Project/vetsuviet
 
             # Pull latest images
