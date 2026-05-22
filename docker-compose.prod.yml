@@ -19,7 +19,7 @@ services:
     depends_on:
       - mongo
     environment:
-      PORT: 5678
+      PORT: 3456
       MONGO_URI: mongodb://mongo:27017/vetsuviet
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: 7d
@@ -29,7 +29,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       ADMIN_FULL_NAME: ${ADMIN_FULL_NAME}
     ports:
-      - "5678:5678"
+      - "3456:3456"
     networks:
       - vsv-network
 
