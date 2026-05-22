@@ -10,6 +10,6 @@ RUN npm install --omit=dev && npm cache clean --force
 # Copy source
 COPY . .
 
-EXPOSE 5678
+EXPOSE 3456
 
 CMD ["node", "server.js"]
