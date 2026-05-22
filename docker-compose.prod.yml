@@ -40,7 +40,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "3455:80"
     networks:
       - vsv-network
 
