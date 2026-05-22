@@ -13,7 +13,7 @@ services:
       - vsv-network
 
   backend:
-    image: ghcr.io/trantuan1173/vsv-backend:latest
+    image: docker.io/${DOCKERHUB_USERNAME:-trantuan1173}/vsv-backend:latest
     container_name: vsv-backend
     restart: unless-stopped
     depends_on:
@@ -34,7 +34,7 @@ services:
       - vsv-network
 
   frontend:
-    image: ghcr.io/trantuan1173/vsv-frontend:latest
+    image: docker.io/${DOCKERHUB_USERNAME:-trantuan1173}/vsv-frontend:latest
     container_name: vsv-frontend
     restart: unless-stopped
     depends_on:

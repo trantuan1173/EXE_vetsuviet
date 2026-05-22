@@ -156,7 +156,7 @@ jobs:
 
     environment:
       name: production
-      url: ${{ secrets.PROD_URL }}
+      url: ${{ vars.PROD_URL }}
 
     steps:
       - name: Checkout code
