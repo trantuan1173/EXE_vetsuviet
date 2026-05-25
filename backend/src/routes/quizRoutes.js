@@ -4,6 +4,9 @@ const quizController = require('../controllers/quizController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { validate, submitQuizValidation } = require('../middleware/validator');
 
+// GET /api/quiz/course/:courseId
+router.get('/course/:courseId', authMiddleware, quizController.getQuizByCourse);
+
 // GET /api/quiz/lesson/:lessonId
 router.get('/lesson/:lessonId', authMiddleware, quizController.getQuizByLesson);
 

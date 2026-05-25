@@ -5,7 +5,7 @@ const quizSchema = new mongoose.Schema(
     lessonId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Lesson',
-      required: [true, 'Lesson ID is required'],
+      default: null,
     },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,

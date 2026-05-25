@@ -24,6 +24,10 @@ router.get('/courses', courseController.getAllCoursesAdmin);
 router.post('/courses', courseController.createCourse);
 router.put('/courses/:id', courseController.updateCourse);
 router.delete('/courses/:id', courseController.deleteCourse);
+router.post('/courses/:id/video/init', courseController.initCourseVideoUpload);
+router.post('/courses/:id/video/complete', courseController.completeCourseVideoUpload);
+router.post('/courses/video/sign-part', courseController.signCourseVideoPart);
+router.post('/courses/video/abort', courseController.abortCourseVideoUpload);
 
 // Chapter management
 router.post('/chapters', courseController.createChapter);

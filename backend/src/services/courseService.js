@@ -2,119 +2,56 @@ const Course = require('../models/Course');
 const Chapter = require('../models/Chapter');
 const Lesson = require('../models/Lesson');
 const Enrollment = require('../models/Enrollment');
+const storageService = require('./storageService');
 const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } = require('../utils/constants');
 
+const PRESIGNED_TTL_SECONDS = parseInt(process.env.VIDEO_PLAYBACK_URL_TTL_SECONDS || '600', 10);
+const MAX_VIDEO_SIZE_BYTES = parseInt(process.env.MAX_VIDEO_SIZE_BYTES || `${5 * 1024 * 1024 * 1024}`, 10);
+
 const courseService = {
-  // Get courses with pagination and filters
   getCourses: async ({ page = 1, limit = DEFAULT_PAGE_SIZE, dynasty, difficulty, search }) => {
     const query = { isPublished: true };
-
     if (dynasty) query.dynasty = dynasty;
     if (difficulty) query.difficulty = difficulty;
-    if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ];
-    }
-
+    if (search) query.$or = [{ title: { $regex: search, $options: 'i' } }, { description: { $regex: search, $options: 'i' } }];
     const safeLimit = Math.min(parseInt(limit), MAX_PAGE_SIZE);
     const skip = (parseInt(page) - 1) * safeLimit;
-
-    const [courses, total] = await Promise.all([
-      Course.find(query).sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
-      Course.countDocuments(query),
-    ]);
-
-    return {
-      courses,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / safeLimit),
-        totalItems: total,
-        itemsPerPage: safeLimit,
-      },
-    };
+    const [courses, total] = await Promise.all([Course.find(query).sort({ createdAt: -1 }).skip(skip).limit(safeLimit), Course.countDocuments(query)]);
+    return { courses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
   },
 
-  // Get course detail with chapters and lessons
   getCourseDetail: async (courseId) => {
     const course = await Course.findById(courseId);
     if (!course) throw new Error('Course not found');
-
-    const chapters = await Chapter.find({ courseId }).sort({ order: 1 });
-    const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
-
-    // Build chapter tree with lessons
-    const chapterTree = chapters.map((chapter) => ({
-      ...chapter.toObject(),
-      lessons: lessons.filter(
-        (lesson) => lesson.chapterId.toString() === chapter._id.toString()
-      ),
-    }));
-
-    return { course, chapters: chapterTree };
+    return { course };
   },
 
-  // Enroll user to course
   enrollCourse: async (userId, courseId) => {
     const course = await Course.findById(courseId);
     if (!course) throw new Error('Course not found');
-
     const existingEnrollment = await Enrollment.findOne({ userId, courseId });
     if (existingEnrollment) throw new Error('Already enrolled in this course');
-
     const enrollment = new Enrollment({ userId, courseId });
     await enrollment.save();
-
-    // Increment enrolled count
     await Course.findByIdAndUpdate(courseId, { $inc: { enrolledCount: 1 } });
-
     return enrollment;
   },
 
-  // Get user enrollments
-  getUserEnrollments: async (userId) => {
-    return await Enrollment.find({ userId })
-      .populate('courseId', 'title thumbnail dynasty difficulty')
-      .sort({ enrolledAt: -1 });
-  },
+  getUserEnrollments: async (userId) => Enrollment.find({ userId }).populate('courseId', 'title thumbnail dynasty difficulty').sort({ enrolledAt: -1 }),
 
-  // Mark lesson as completed
-  completeLesson: async (userId, courseId, lessonId) => {
+  completeCourse: async (userId, courseId) => {
     const enrollment = await Enrollment.findOne({ userId, courseId });
     if (!enrollment) throw new Error('Not enrolled in this course');
-
-    if (!enrollment.completedLessons.includes(lessonId)) {
-      enrollment.completedLessons.push(lessonId);
-
-      // Calculate progress
-      const totalLessons = await Lesson.countDocuments({ courseId });
-      enrollment.progress = Math.round(
-        (enrollment.completedLessons.length / totalLessons) * 100
-      );
-
-      if (enrollment.progress >= 100) {
-        enrollment.completedAt = new Date();
-      }
-
-      await enrollment.save();
-    }
-
+    enrollment.progress = 100;
+    enrollment.completedAt = enrollment.completedAt || new Date();
+    await enrollment.save();
     return enrollment;
   },
 
-  // Admin: CRUD Course
-  createCourse: async (data) => {
-    const course = new Course(data);
-    return await course.save();
-  },
+  createCourse: async (data) => new Course(data).save(),
 
   updateCourse: async (courseId, data) => {
-    const course = await Course.findByIdAndUpdate(courseId, data, {
-      new: true,
-      runValidators: true,
-    });
+    const course = await Course.findByIdAndUpdate(courseId, data, { new: true, runValidators: true });
     if (!course) throw new Error('Course not found');
     return course;
   },
@@ -122,28 +59,18 @@ const courseService = {
   deleteCourse: async (courseId) => {
     const course = await Course.findByIdAndDelete(courseId);
     if (!course) throw new Error('Course not found');
-
-    // Cascade delete chapters, lessons
-    await Chapter.deleteMany({ courseId });
-    await Lesson.deleteMany({ courseId });
-
+    await storageService.deleteObject(course.videoKey);
     return course;
   },
 
-  // Admin: CRUD Chapter
   createChapter: async (data) => {
     const course = await Course.findById(data.courseId);
     if (!course) throw new Error('Course not found');
-
-    const chapter = new Chapter(data);
-    return await chapter.save();
+    return new Chapter(data).save();
   },
 
   updateChapter: async (chapterId, data) => {
-    const chapter = await Chapter.findByIdAndUpdate(chapterId, data, {
-      new: true,
-      runValidators: true,
-    });
+    const chapter = await Chapter.findByIdAndUpdate(chapterId, data, { new: true, runValidators: true });
     if (!chapter) throw new Error('Chapter not found');
     return chapter;
   },
@@ -151,30 +78,19 @@ const courseService = {
   deleteChapter: async (chapterId) => {
     const chapter = await Chapter.findByIdAndDelete(chapterId);
     if (!chapter) throw new Error('Chapter not found');
-
-    // Cascade delete lessons in this chapter
     await Lesson.deleteMany({ chapterId });
-
     return chapter;
   },
 
-  // Admin: CRUD Lesson
   createLesson: async (data) => {
     const chapter = await Chapter.findById(data.chapterId);
     if (!chapter) throw new Error('Chapter not found');
-
-    // Auto-set courseId from chapter
     data.courseId = chapter.courseId;
-
-    const lesson = new Lesson(data);
-    return await lesson.save();
+    return new Lesson(data).save();
   },
 
   updateLesson: async (lessonId, data) => {
-    const lesson = await Lesson.findByIdAndUpdate(lessonId, data, {
-      new: true,
-      runValidators: true,
-    });
+    const lesson = await Lesson.findByIdAndUpdate(lessonId, data, { new: true, runValidators: true });
     if (!lesson) throw new Error('Lesson not found');
     return lesson;
   },
@@ -185,25 +101,49 @@ const courseService = {
     return lesson;
   },
 
-  // Admin: Get all courses (including unpublished)
   getAllCoursesAdmin: async ({ page = 1, limit = DEFAULT_PAGE_SIZE }) => {
     const safeLimit = Math.min(parseInt(limit), MAX_PAGE_SIZE);
     const skip = (parseInt(page) - 1) * safeLimit;
+    const [courses, total] = await Promise.all([Course.find().sort({ createdAt: -1 }).skip(skip).limit(safeLimit), Course.countDocuments()]);
+    return { courses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
+  },
 
-    const [courses, total] = await Promise.all([
-      Course.find().sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
-      Course.countDocuments(),
-    ]);
+  initCourseVideoUpload: async ({ courseId, fileName, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (!fileSize || fileSize > MAX_VIDEO_SIZE_BYTES) throw new Error('Video size exceeds limit');
+    const safeName = (fileName || 'video.mp4').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `courses/${courseId}/${Date.now()}-${safeName}`;
+    const upload = await storageService.createMultipartUpload({ key, contentType: contentType || 'video/mp4' });
+    return { uploadId: upload.UploadId, key, partSize: 8 * 1024 * 1024 };
+  },
 
-    return {
-      courses,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / safeLimit),
-        totalItems: total,
-        itemsPerPage: safeLimit,
-      },
-    };
+  signCourseVideoPart: async ({ key, uploadId, partNumber }) => {
+    if (!partNumber || partNumber < 1) throw new Error('Invalid partNumber');
+    const signedUrl = await storageService.getUploadPartSignedUrl({ key, uploadId, partNumber });
+    return { signedUrl };
+  },
+
+  completeCourseVideoUpload: async ({ courseId, key, uploadId, parts, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    await storageService.completeMultipartUpload({ key, uploadId, parts });
+    if (course.videoKey && course.videoKey !== key) await storageService.deleteObject(course.videoKey);
+    course.videoKey = key;
+    course.videoUrl = `/api/courses/${courseId}/video/playback`;
+    course.videoMimeType = contentType || 'video/mp4';
+    course.videoSize = fileSize || 0;
+    await course.save();
+    return { course };
+  },
+
+  abortCourseVideoUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
+
+  getCoursePlaybackUrl: async (courseId) => {
+    const course = await Course.findById(courseId);
+    if (!course || !course.videoKey) throw new Error('Video not found');
+    const playbackUrl = await storageService.getSignedPlaybackUrl(course.videoKey, PRESIGNED_TTL_SECONDS);
+    return { playbackUrl, expiresIn: PRESIGNED_TTL_SECONDS };
   },
 };
 

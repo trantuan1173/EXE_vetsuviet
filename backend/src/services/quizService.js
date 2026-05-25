@@ -5,9 +5,9 @@ const User = require('../models/User');
 const RewardTransaction = require('../models/RewardTransaction');
 
 const quizService = {
-  // Get quiz by lesson ID (for user)
-  getQuizByLesson: async (lessonId) => {
-    const quiz = await Quiz.findOne({ lessonId, isPublished: true });
+  // Get quiz by course ID (for user)
+  getQuizByCourse: async (courseId) => {
+    const quiz = await Quiz.findOne({ courseId, isPublished: true });
     if (!quiz) throw new Error('Quiz not found');
 
     const questions = await QuizQuestion.find({ quizId: quiz._id }).sort({ order: 1 });
@@ -22,6 +22,22 @@ const quizService = {
         _id: a._id,
         text: a.text,
       })),
+    }));
+
+    return { quiz, questions: safeQuestions };
+  },
+
+  getQuizByLesson: async (lessonId) => {
+    const quiz = await Quiz.findOne({ lessonId, isPublished: true });
+    if (!quiz) throw new Error('Quiz not found');
+
+    const questions = await QuizQuestion.find({ quizId: quiz._id }).sort({ order: 1 });
+    const safeQuestions = questions.map((q) => ({
+      _id: q._id,
+      question: q.question,
+      questionType: q.questionType,
+      order: q.order,
+      answers: q.answers.map((a) => ({ _id: a._id, text: a.text })),
     }));
 
     return { quiz, questions: safeQuestions };
@@ -163,10 +179,7 @@ const quizService = {
   // Admin: Get all quizzes
   getAllQuizzes: async (courseId) => {
     const query = courseId ? { courseId } : {};
-    return await Quiz.find(query)
-      .populate('lessonId', 'title')
-      .populate('courseId', 'title')
-      .sort({ createdAt: -1 });
+    return await Quiz.find(query).populate('courseId', 'title').sort({ createdAt: -1 });
   },
 
   // Admin: Get questions by quiz

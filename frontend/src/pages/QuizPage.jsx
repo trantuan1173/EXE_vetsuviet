@@ -9,7 +9,7 @@ import Loading from '../components/Common/Loading';
 import { useNotification } from '../hooks/useNotification';
 
 const QuizPage = () => {
-  const { lessonId } = useParams();
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const { error } = useNotification();
 
@@ -22,12 +22,12 @@ const QuizPage = () => {
 
   useEffect(() => {
     fetchQuiz();
-  }, [lessonId]);
+  }, [courseId]);
 
   const fetchQuiz = async () => {
     setLoading(true);
     try {
-      const response = await quizService.getQuizByLesson(lessonId);
+      const response = await quizService.getQuizByCourse(courseId);
       setQuiz(response.data.data.quiz);
       setQuestions(response.data.data.questions);
     } catch (err) {

@@ -25,6 +25,32 @@ const courseSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    content: {
+      type: String,
+      default: '',
+    },
+    videoUrl: {
+      type: String,
+      default: null,
+    },
+    videoKey: {
+      type: String,
+      default: null,
+    },
+    videoMimeType: {
+      type: String,
+      default: null,
+    },
+    videoSize: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    duration: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     enrolledCount: {
       type: Number,
       default: 0,

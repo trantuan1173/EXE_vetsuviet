@@ -2,6 +2,16 @@ const quizService = require('../services/quizService');
 const { sendResponse } = require('../utils/response');
 
 const quizController = {
+  // GET /api/quiz/course/:courseId
+  getQuizByCourse: async (req, res, next) => {
+    try {
+      const result = await quizService.getQuizByCourse(req.params.courseId);
+      sendResponse(res, 200, true, 'Quiz retrieved', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // GET /api/quiz/lesson/:lessonId
   getQuizByLesson: async (req, res, next) => {
     try {

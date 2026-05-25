@@ -29,6 +29,59 @@ import AdminOrders from './pages/AdminOrders';
 import AdminCourses from './pages/AdminCourses';
 import AdminQuizzes from './pages/AdminQuizzes';
 
+function PublicLayout() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/courses" element={<CourseList />} />
+          <Route path="/courses/:id" element={<CourseDetail />} />
+          <Route
+            path="/courses/:courseId/learn"
+            element={
+              <ProtectedRoute>
+                <LessonView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quiz/course/:courseId"
+            element={
+              <ProtectedRoute>
+                <QuizPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -37,46 +90,7 @@ function App() {
           <CartProvider>
             <Toast />
             <Routes>
-              {/* Public Routes with Navbar/Footer */}
-              <Route
-                path="/*"
-                element={
-                  <div className="flex flex-col min-h-screen">
-                    <Navbar />
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/courses" element={<CourseList />} />
-                        <Route path="/courses/:id" element={<CourseDetail />} />
-                        <Route path="/lessons/:lessonId" element={<LessonView />} />
-                        <Route path="/quiz/lesson/:lessonId" element={<QuizPage />} />
-                        <Route path="/shop" element={<Shop />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route
-                          path="/checkout"
-                          element={
-                            <ProtectedRoute>
-                              <Checkout />
-                            </ProtectedRoute>
-                          }
-                        />
-                        <Route
-                          path="/profile"
-                          element={
-                            <ProtectedRoute>
-                              <UserProfile />
-                            </ProtectedRoute>
-                          }
-                        />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                    <Footer />
-                  </div>
-                }
-              />
+              <Route path="/*" element={<PublicLayout />} />
 
               {/* Admin Routes (No Navbar/Footer) */}
               <Route

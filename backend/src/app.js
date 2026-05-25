@@ -15,6 +15,13 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, _res, next) => {
+    console.log(`${req.method} ${req.originalUrl}`);
+    next();
+  });
+}
+
 // ---- Health Check ----
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: '🎌 Vết Sử Việt API is running' });

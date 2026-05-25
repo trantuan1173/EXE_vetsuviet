@@ -13,16 +13,10 @@ const adminService = {
   createCourse: (data) => api.post('/admin/courses', data),
   updateCourse: (id, data) => api.put(`/admin/courses/${id}`, data),
   deleteCourse: (id) => api.delete(`/admin/courses/${id}`),
-
-  // Chapters
-  createChapter: (data) => api.post('/admin/chapters', data),
-  updateChapter: (id, data) => api.put(`/admin/chapters/${id}`, data),
-  deleteChapter: (id) => api.delete(`/admin/chapters/${id}`),
-
-  // Lessons
-  createLesson: (data) => api.post('/admin/lessons', data),
-  updateLesson: (id, data) => api.put(`/admin/lessons/${id}`, data),
-  deleteLesson: (id) => api.delete(`/admin/lessons/${id}`),
+  initCourseVideoUpload: (id, data) => api.post(`/admin/courses/${id}/video/init`, data),
+  signCourseVideoPart: (data) => api.post('/admin/courses/video/sign-part', data),
+  completeCourseVideoUpload: (id, data) => api.post(`/admin/courses/${id}/video/complete`, data),
+  abortCourseVideoUpload: (data) => api.post('/admin/courses/video/abort', data),
 
   // Quizzes
   getAllQuizzes: (params) => api.get('/admin/quizzes', { params }),

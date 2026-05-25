@@ -5,12 +5,13 @@ const courseService = {
 
   getCourseDetail: (id) => api.get(`/courses/${id}`),
 
+  getCoursePlaybackUrl: (id) => api.get(`/courses/${id}/video/playback`),
+
   enrollCourse: (id) => api.post(`/courses/${id}/enroll`),
 
   getEnrolledCourses: () => api.get('/courses/enrolled'),
 
-  completeLesson: (courseId, lessonId) =>
-    api.post(`/courses/${courseId}/lessons/${lessonId}/complete`),
+  completeCourse: (courseId) => api.post(`/courses/${courseId}/complete`),
 };
 
 export default courseService;

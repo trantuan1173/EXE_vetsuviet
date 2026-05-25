@@ -1,90 +1,184 @@
 import { Link } from 'react-router-dom';
-import Button from '../components/Common/Button';
+import heroBg from '../assets/Nen web 1.png';
+
+const featureCards = [
+  {
+    title: 'Học sử thú vị',
+    description: 'Bài học sinh động, dễ hiểu theo từng giai đoạn lịch sử.',
+    cta: 'Khám phá ngay',
+    icon: '📚',
+  },
+  {
+    title: 'Khám phá thêm',
+    description: 'Được nhìn, chiêm ngưỡng những điều thú vị',
+    cta: '',
+    icon: '🔍',
+  },
+  {
+    title: 'Tham gia cộng đồng',
+    description:
+      'Tham gia cộng đồng Vết Sử Việt để thảo luận, chia sẻ kiến thức và kết nối với những người cùng đam mê lịch sử dân tộc.',
+    cta: 'Tham gia ngay',
+    icon: '🤝',
+  },
+];
+
+const eraCards = [
+  {
+    title: 'Thời kỳ dựng nước',
+    subtitle: 'Nền văn minh đầu tiên',
+    lessons: '12/20 bài học',
+    progress: 60,
+  },
+  {
+    title: 'Thời kỳ phong kiến',
+    subtitle: 'Đấu tranh giành độc lập',
+    lessons: '18/30 bài học',
+    progress: 60,
+  },
+  {
+    title: 'Thời kỳ cận đại',
+    subtitle: 'Giành độc lập dân tộc',
+    lessons: '15/25 bài học',
+    progress: 60,
+  },
+];
 
 const Home = () => {
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6">
-              Khám phá Lịch sử Việt Nam
+    <div className="bg-[#FFF7E4] text-[#111827]">
+      <section
+        className="relative min-h-[815px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBg})` }}
+      >
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="relative z-10 mx-auto max-w-[1440px] px-6 lg:px-10 pt-8">
+          <div className="pt-40 md:pt-52 max-w-[680px]">
+            <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-[56px]">
+              Hành trình qua những
+              <br />
+              cột mốc vàng son
             </h1>
-            <p className="text-lg md:text-xl text-primary-100 mb-8">
-              Học lịch sử qua quiz tương tác, kiếm XP, lên cấp và khám phá
-              các vật phẩm lịch sử tại cửa hàng.
+            <div className="mt-10">
+              <Link
+                to="/courses"
+                className="inline-flex items-center justify-center rounded-[7px] bg-[#FFD36E] px-10 py-4 text-[#601407] text-2xl font-medium"
+              >
+                Bắt đầu học ngay
+              </Link>
+            </div>
+            <p className="mt-5 text-[#111827] text-lg md:text-xl">
+              Hơn 1000+ <span className="text-[#FFD36E] font-bold">học viên đã tham gia</span>
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/courses">
-                <Button variant="gold" size="lg">
-                  Bắt đầu học ngay
-                </Button>
-              </Link>
-              <Link to="/shop">
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
-                  Khám phá cửa hàng
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-heading font-bold text-center mb-12 text-gray-800">
-            Tại sao chọn Vết Sử Việt?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-              <div className="text-4xl mb-4">📚</div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Khóa học theo Triều đại</h3>
-              <p className="text-gray-600">
-                Nội dung được hệ thống theo từng triều đại lịch sử Việt Nam, từ
-                Hùng Vương đến Nguyễn.
-              </p>
+      <section className="mx-auto max-w-[1280px] px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 -mt-10 relative z-20">
+        {featureCards.map((item) => (
+          <div
+            key={item.title}
+            className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)]"
+          >
+            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-[#6F0D0D]/10 flex items-center justify-center text-3xl">
+              {item.icon}
             </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-              <div className="text-4xl mb-4">❓</div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Quiz tương tác</h3>
-              <p className="text-gray-600">
-                Kiểm tra kiến thức qua các bài quiz hấp dẫn với bộ đếm thời
-                gian và chấm điểm tức thì.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-              <div className="text-4xl mb-4">🏆</div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Gamification (XP/Level)</h3>
-              <p className="text-gray-600">
-                Kiếm XP qua quiz, lên level và theo dõi tiến trình học tập
-                của bạn.
-              </p>
-            </div>
+            <h3 className="text-[20px] leading-7 font-bold mb-3">{item.title}</h3>
+            <p className="text-[#4B5563] text-[16px] leading-6 mb-4">{item.description}</p>
+            {item.cta && <span className="text-[#6F0D0D] font-bold text-[16px]">{item.cta}</span>}
           </div>
+        ))}
+      </section>
+
+      <section className="mx-auto max-w-[1280px] px-6 py-16">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-[#6F0D0D] font-bold tracking-[0.1em] text-sm">KHÁM PHÁ</span>
+              <span className="h-px w-12 bg-[#6F0D0D]" />
+            </div>
+            <h2 className="text-4xl font-bold mb-4">Các khóa học lịch sử Việt Nam</h2>
+            <p className="text-[#4B5563] text-lg leading-7">
+              Hệ thống khóa học được biên soạn theo từng giai đoạn lịch sử, bám sát chương trình và mở rộng kiến
+              thức.
+            </p>
+          </div>
+          <button className="self-start lg:self-auto border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-8 py-3 rounded">
+            Xem tất cả khóa học
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {eraCards.map((era) => (
+            <article key={era.title} className="rounded-xl border border-[#DED9D2] bg-white shadow-sm overflow-hidden">
+              <div className="h-48 bg-gradient-to-br from-[#6F0D0D] to-[#D4AF37]" />
+              <div className="p-6">
+                <h3 className="text-2xl font-bold mb-2">{era.title}</h3>
+                <p className="text-[#6B7280] mb-5">{era.subtitle}</p>
+                <div className="flex items-center justify-between text-xs text-[#9CA3AF] mb-3">
+                  <span>{era.lessons}</span>
+                  <span>{era.progress}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-[#F3F4F6]">
+                  <div className="h-2 rounded-full bg-[#D4AF37]" style={{ width: `${era.progress}%` }} />
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-heading font-bold mb-4 text-gray-800">
-            Sẵn sàng khám phá lịch sử?
+      <section className="mx-auto max-w-[1232px] px-6">
+        <div className="rounded-2xl bg-[#6F0D0D] px-8 md:px-12 py-10 md:py-12 text-white flex flex-col lg:flex-row lg:items-center gap-8">
+          <div className="flex-1">
+            <h3 className="text-3xl md:text-4xl font-bold leading-tight mb-4">
+              Tham gia thử thách – Tích điểm
+              <br />– Nhận phần thưởng
+            </h3>
+            <p className="text-white/90 text-lg leading-7">
+              Kiểm tra kiến thức qua quiz, sự kiện hấp dẫn và nhận những phần quà độc quyền từ Vết Sử Việt.
+            </p>
+          </div>
+          <button className="bg-[#FFD36E] text-[#6F0D0D] font-bold px-8 py-4 rounded-lg">Tham gia ngay</button>
+        </div>
+      </section>
+
+      <section id="community" className="mx-auto max-w-[1280px] px-6 py-20 grid grid-cols-1 lg:grid-cols-[390px_1fr] gap-12">
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[#6F0D0D] font-bold tracking-[0.1em] text-sm">CỘNG ĐỒNG</span>
+            <span className="h-px w-12 bg-[#6F0D0D]" />
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-5">
+            Cùng nhau lan
+            <br />
+            tỏa tình yêu
+            <br />
+            lịch sử
           </h2>
-          <p className="text-gray-600 mb-8 text-lg">
-            Tham gia cùng hàng ngàn người học và bắt đầu hành trình của bạn ngay hôm nay.
+          <p className="text-[#4B5563] leading-7 mb-7">
+            Tham gia cộng đồng Vết Sử Việt để thảo luận, chia sẻ kiến thức và kết nối với những người cùng đam mê lịch
+            sử dân tộc.
           </p>
-          <Link to="/register">
-            <Button size="lg">Đăng ký miễn phí</Button>
-          </Link>
+          <button className="border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-8 py-4 rounded-lg">
+            Tham gia cộng đồng
+          </button>
+        </div>
+
+        <div className="rounded-3xl border border-[#6F0D0D]/10 bg-[#6F0D0D]/5 p-8 md:p-10">
+          <p className="text-[#6F0D0D] font-bold text-lg mb-4">+1.2K thành viên mới tuần này</p>
+          <h3 className="text-3xl font-bold text-[#6F0D0D] mb-4">Cộng đồng Vết Sử Việt</h3>
+          <p className="text-[#374151] mb-6">
+            Nơi giao lưu, học hỏi và chia sẻ kiến thức lịch sử cùng hàng nghìn thành viên.
+          </p>
+          <ul className="space-y-3 text-[#1F2937]">
+            <li>• Thảo luận sôi nổi mỗi ngày</li>
+            <li>• Sự kiện cộng đồng hấp dẫn</li>
+            <li>• Chia sẻ tài liệu, nguồn học liệu giá trị</li>
+          </ul>
         </div>
       </section>
+
     </div>
   );
 };

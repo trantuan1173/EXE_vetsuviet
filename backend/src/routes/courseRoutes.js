@@ -7,15 +7,12 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.get('/', courseController.getCourses);
 router.get('/enrolled', authMiddleware, courseController.getEnrolledCourses);
 router.get('/:id', courseController.getCourseDetail);
+router.get('/:id/video/playback', authMiddleware, courseController.getCourseVideoPlayback);
 
 // Protected: Enrollment
 router.post('/:id/enroll', authMiddleware, courseController.enrollCourse);
 
-// Protected: Mark lesson complete
-router.post(
-  '/:courseId/lessons/:lessonId/complete',
-  authMiddleware,
-  courseController.completeLesson
-);
+// Protected: Mark course complete
+router.post('/:courseId/complete', authMiddleware, courseController.completeCourse);
 
 module.exports = router;

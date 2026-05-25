@@ -2,7 +2,6 @@ const courseService = require('../services/courseService');
 const { sendResponse } = require('../utils/response');
 
 const courseController = {
-  // GET /api/courses
   getCourses: async (req, res, next) => {
     try {
       const { page, limit, dynasty, difficulty, search } = req.query;
@@ -13,7 +12,6 @@ const courseController = {
     }
   },
 
-  // GET /api/courses/:id
   getCourseDetail: async (req, res, next) => {
     try {
       const result = await courseService.getCourseDetail(req.params.id);
@@ -23,139 +21,60 @@ const courseController = {
     }
   },
 
-  // POST /api/courses/:id/enroll
-  enrollCourse: async (req, res, next) => {
+  getCourseVideoPlayback: async (req, res, next) => {
     try {
-      const enrollment = await courseService.enrollCourse(req.user.id, req.params.id);
-      sendResponse(res, 201, true, 'Enrolled successfully', enrollment);
+      const result = await courseService.getCoursePlaybackUrl(req.params.id);
+      sendResponse(res, 200, true, 'Playback URL generated', result);
     } catch (error) {
       next(error);
     }
   },
 
-  // GET /api/courses/enrolled
-  getEnrolledCourses: async (req, res, next) => {
+  enrollCourse: async (req, res, next) => { try { sendResponse(res, 201, true, 'Enrolled successfully', await courseService.enrollCourse(req.user.id, req.params.id)); } catch (error) { next(error); } },
+  getEnrolledCourses: async (req, res, next) => { try { sendResponse(res, 200, true, 'Enrolled courses retrieved', await courseService.getUserEnrollments(req.user.id)); } catch (error) { next(error); } },
+  completeCourse: async (req, res, next) => { try { sendResponse(res, 200, true, 'Course marked as completed', await courseService.completeCourse(req.user.id, req.params.courseId)); } catch (error) { next(error); } },
+  createCourse: async (req, res, next) => { try { sendResponse(res, 201, true, 'Course created', await courseService.createCourse(req.body)); } catch (error) { next(error); } },
+  updateCourse: async (req, res, next) => { try { sendResponse(res, 200, true, 'Course updated', await courseService.updateCourse(req.params.id, req.body)); } catch (error) { next(error); } },
+  deleteCourse: async (req, res, next) => { try { await courseService.deleteCourse(req.params.id); sendResponse(res, 200, true, 'Course deleted'); } catch (error) { next(error); } },
+  createChapter: async (req, res, next) => { try { sendResponse(res, 201, true, 'Chapter created', await courseService.createChapter(req.body)); } catch (error) { next(error); } },
+  updateChapter: async (req, res, next) => { try { sendResponse(res, 200, true, 'Chapter updated', await courseService.updateChapter(req.params.id, req.body)); } catch (error) { next(error); } },
+  deleteChapter: async (req, res, next) => { try { await courseService.deleteChapter(req.params.id); sendResponse(res, 200, true, 'Chapter deleted'); } catch (error) { next(error); } },
+  createLesson: async (req, res, next) => { try { sendResponse(res, 201, true, 'Lesson created', await courseService.createLesson(req.body)); } catch (error) { next(error); } },
+  updateLesson: async (req, res, next) => { try { sendResponse(res, 200, true, 'Lesson updated', await courseService.updateLesson(req.params.id, req.body)); } catch (error) { next(error); } },
+  deleteLesson: async (req, res, next) => { try { await courseService.deleteLesson(req.params.id); sendResponse(res, 200, true, 'Lesson deleted'); } catch (error) { next(error); } },
+  getAllCoursesAdmin: async (req, res, next) => { try { const { page, limit } = req.query; sendResponse(res, 200, true, 'All courses retrieved', await courseService.getAllCoursesAdmin({ page, limit })); } catch (error) { next(error); } },
+
+  initCourseVideoUpload: async (req, res, next) => {
     try {
-      const enrollments = await courseService.getUserEnrollments(req.user.id);
-      sendResponse(res, 200, true, 'Enrolled courses retrieved', enrollments);
+      const result = await courseService.initCourseVideoUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Upload initialized', result);
     } catch (error) {
       next(error);
     }
   },
 
-  // POST /api/courses/:courseId/lessons/:lessonId/complete
-  completeLesson: async (req, res, next) => {
+  signCourseVideoPart: async (req, res, next) => {
     try {
-      const enrollment = await courseService.completeLesson(
-        req.user.id,
-        req.params.courseId,
-        req.params.lessonId
-      );
-      sendResponse(res, 200, true, 'Lesson marked as completed', enrollment);
+      const result = await courseService.signCourseVideoPart(req.body);
+      sendResponse(res, 200, true, 'Part signed', result);
     } catch (error) {
       next(error);
     }
   },
 
-  // ---- ADMIN ----
-  // POST /api/admin/courses
-  createCourse: async (req, res, next) => {
+  completeCourseVideoUpload: async (req, res, next) => {
     try {
-      const course = await courseService.createCourse(req.body);
-      sendResponse(res, 201, true, 'Course created', course);
+      const result = await courseService.completeCourseVideoUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Upload completed', result);
     } catch (error) {
       next(error);
     }
   },
 
-  // PUT /api/admin/courses/:id
-  updateCourse: async (req, res, next) => {
+  abortCourseVideoUpload: async (req, res, next) => {
     try {
-      const course = await courseService.updateCourse(req.params.id, req.body);
-      sendResponse(res, 200, true, 'Course updated', course);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // DELETE /api/admin/courses/:id
-  deleteCourse: async (req, res, next) => {
-    try {
-      await courseService.deleteCourse(req.params.id);
-      sendResponse(res, 200, true, 'Course deleted');
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // ---- ADMIN: CHAPTER ----
-  // POST /api/admin/chapters
-  createChapter: async (req, res, next) => {
-    try {
-      const chapter = await courseService.createChapter(req.body);
-      sendResponse(res, 201, true, 'Chapter created', chapter);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // PUT /api/admin/chapters/:id
-  updateChapter: async (req, res, next) => {
-    try {
-      const chapter = await courseService.updateChapter(req.params.id, req.body);
-      sendResponse(res, 200, true, 'Chapter updated', chapter);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // DELETE /api/admin/chapters/:id
-  deleteChapter: async (req, res, next) => {
-    try {
-      await courseService.deleteChapter(req.params.id);
-      sendResponse(res, 200, true, 'Chapter deleted');
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // ---- ADMIN: LESSON ----
-  // POST /api/admin/lessons
-  createLesson: async (req, res, next) => {
-    try {
-      const lesson = await courseService.createLesson(req.body);
-      sendResponse(res, 201, true, 'Lesson created', lesson);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // PUT /api/admin/lessons/:id
-  updateLesson: async (req, res, next) => {
-    try {
-      const lesson = await courseService.updateLesson(req.params.id, req.body);
-      sendResponse(res, 200, true, 'Lesson updated', lesson);
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // DELETE /api/admin/lessons/:id
-  deleteLesson: async (req, res, next) => {
-    try {
-      await courseService.deleteLesson(req.params.id);
-      sendResponse(res, 200, true, 'Lesson deleted');
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // ADMIN: Get all courses (with unpublished)
-  getAllCoursesAdmin: async (req, res, next) => {
-    try {
-      const { page, limit } = req.query;
-      const result = await courseService.getAllCoursesAdmin({ page, limit });
-      sendResponse(res, 200, true, 'All courses retrieved', result);
+      await courseService.abortCourseVideoUpload(req.body);
+      sendResponse(res, 200, true, 'Upload aborted');
     } catch (error) {
       next(error);
     }
