@@ -7,6 +7,24 @@ const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } = require('../utils/constants');
 
 const PRESIGNED_TTL_SECONDS = parseInt(process.env.VIDEO_PLAYBACK_URL_TTL_SECONDS || '600', 10);
 const MAX_VIDEO_SIZE_BYTES = parseInt(process.env.MAX_VIDEO_SIZE_BYTES || `${5 * 1024 * 1024 * 1024}`, 10);
+const MAX_COVER_IMAGE_SIZE_BYTES = parseInt(process.env.MAX_COVER_IMAGE_SIZE_BYTES || `${10 * 1024 * 1024}`, 10);
+const ALLOWED_COVER_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+const withSignedCoverUrl = async (course) => {
+  if (!course) return course;
+  if (!course.coverImageKey) return course;
+
+  const signedUrl = await storageService.getSignedPlaybackUrl(course.coverImageKey, PRESIGNED_TTL_SECONDS);
+  if (typeof course.toObject === 'function') {
+    const plain = course.toObject();
+    plain.thumbnail = signedUrl;
+    return plain;
+  }
+
+  return { ...course, thumbnail: signedUrl };
+};
+
+const withSignedCoverUrls = async (courses) => Promise.all((courses || []).map(withSignedCoverUrl));
 
 const courseService = {
   getCourses: async ({ page = 1, limit = DEFAULT_PAGE_SIZE, dynasty, difficulty, search }) => {
@@ -17,13 +35,15 @@ const courseService = {
     const safeLimit = Math.min(parseInt(limit), MAX_PAGE_SIZE);
     const skip = (parseInt(page) - 1) * safeLimit;
     const [courses, total] = await Promise.all([Course.find(query).sort({ createdAt: -1 }).skip(skip).limit(safeLimit), Course.countDocuments(query)]);
-    return { courses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
+    const normalizedCourses = await withSignedCoverUrls(courses);
+    return { courses: normalizedCourses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
   },
 
   getCourseDetail: async (courseId) => {
     const course = await Course.findById(courseId);
     if (!course) throw new Error('Course not found');
-    return { course };
+    const normalizedCourse = await withSignedCoverUrl(course);
+    return { course: normalizedCourse };
   },
 
   enrollCourse: async (userId, courseId) => {
@@ -59,7 +79,7 @@ const courseService = {
   deleteCourse: async (courseId) => {
     const course = await Course.findByIdAndDelete(courseId);
     if (!course) throw new Error('Course not found');
-    await storageService.deleteObject(course.videoKey);
+    await Promise.all([storageService.deleteObject(course.videoKey), storageService.deleteObject(course.coverImageKey)]);
     return course;
   },
 
@@ -105,7 +125,8 @@ const courseService = {
     const safeLimit = Math.min(parseInt(limit), MAX_PAGE_SIZE);
     const skip = (parseInt(page) - 1) * safeLimit;
     const [courses, total] = await Promise.all([Course.find().sort({ createdAt: -1 }).skip(skip).limit(safeLimit), Course.countDocuments()]);
-    return { courses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
+    const normalizedCourses = await withSignedCoverUrls(courses);
+    return { courses: normalizedCourses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
   },
 
   initCourseVideoUpload: async ({ courseId, fileName, contentType, fileSize }) => {
@@ -113,9 +134,21 @@ const courseService = {
     if (!course) throw new Error('Course not found');
     if (!fileSize || fileSize > MAX_VIDEO_SIZE_BYTES) throw new Error('Video size exceeds limit');
     const safeName = (fileName || 'video.mp4').replace(/[^a-zA-Z0-9._-]/g, '_');
-    const key = `courses/${courseId}/${Date.now()}-${safeName}`;
+    const key = `courses/${courseId}/videos/${Date.now()}-${safeName}`;
     const upload = await storageService.createMultipartUpload({ key, contentType: contentType || 'video/mp4' });
     return { uploadId: upload.UploadId, key, partSize: 8 * 1024 * 1024 };
+  },
+
+  initCourseCoverUpload: async ({ courseId, fileName, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (!fileSize || fileSize > MAX_COVER_IMAGE_SIZE_BYTES) throw new Error('Cover image size exceeds limit');
+    const normalizedType = contentType || 'image/jpeg';
+    if (!ALLOWED_COVER_IMAGE_TYPES.has(normalizedType)) throw new Error('Invalid cover image type');
+    const safeName = (fileName || 'cover.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `courses/${courseId}/covers/${Date.now()}-${safeName}`;
+    const upload = await storageService.createMultipartUpload({ key, contentType: normalizedType });
+    return { uploadId: upload.UploadId, key, partSize: 5 * 1024 * 1024 };
   },
 
   signCourseVideoPart: async ({ key, uploadId, partNumber }) => {
@@ -137,7 +170,29 @@ const courseService = {
     return { course };
   },
 
+  completeCourseCoverUpload: async ({ courseId, key, uploadId, parts, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    const normalizedType = contentType || 'image/jpeg';
+    if (!ALLOWED_COVER_IMAGE_TYPES.has(normalizedType)) throw new Error('Invalid cover image type');
+    if (!fileSize || fileSize > MAX_COVER_IMAGE_SIZE_BYTES) throw new Error('Cover image size exceeds limit');
+
+    await storageService.completeMultipartUpload({ key, uploadId, parts });
+    if (course.coverImageKey && course.coverImageKey !== key) await storageService.deleteObject(course.coverImageKey);
+
+    const playbackUrl = await storageService.getSignedPlaybackUrl(key, PRESIGNED_TTL_SECONDS);
+
+    course.coverImageKey = key;
+    course.coverImageMimeType = normalizedType;
+    course.coverImageSize = fileSize || 0;
+    course.thumbnail = playbackUrl;
+    await course.save();
+    const normalizedCourse = await withSignedCoverUrl(course);
+    return { course: normalizedCourse };
+  },
+
   abortCourseVideoUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
+  abortCourseCoverUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
 
   getCoursePlaybackUrl: async (courseId) => {
     const course = await Course.findById(courseId);

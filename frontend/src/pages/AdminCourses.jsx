@@ -45,6 +45,8 @@ const AdminCourses = () => {
   const [currentCourse, setCurrentCourse] = useState(EMPTY_COURSE);
   const [uploadingCourseId, setUploadingCourseId] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadingCoverCourseId, setUploadingCoverCourseId] = useState(null);
+  const [coverUploadProgress, setCoverUploadProgress] = useState(0);
 
   useEffect(() => {
     fetchCourses();
@@ -130,31 +132,25 @@ const AdminCourses = () => {
     }
   };
 
-  const uploadCourseVideo = async (courseId, file) => {
+  const uploadMultipartFile = async ({ file, initUpload, completeUpload, abortUpload, setProgress, partConcurrency = 3 }) => {
     const uploadedParts = [];
     let uploadSession = null;
     let uploadedBytes = 0;
 
     try {
-      setUploadingCourseId(courseId);
-      setUploadProgress(0);
-
-      const initRes = await adminService.initCourseVideoUpload(courseId, {
-        fileName: file.name,
-        contentType: file.type || 'video/mp4',
-        fileSize: file.size,
-      });
+      setProgress(0);
+      const initRes = await initUpload();
       uploadSession = initRes.data.data;
 
       const partSize = uploadSession.partSize;
       const totalParts = Math.ceil(file.size / partSize);
-      const concurrency = 3;
       let nextPart = 1;
 
       const uploadPart = async (partNumber) => {
         const start = (partNumber - 1) * partSize;
         const end = Math.min(start + partSize, file.size);
         const chunk = file.slice(start, end);
+
         const signRes = await adminService.signCourseVideoPart({
           key: uploadSession.key,
           uploadId: uploadSession.uploadId,
@@ -164,46 +160,92 @@ const AdminCourses = () => {
         const uploadRes = await fetch(signRes.data.data.signedUrl, {
           method: 'PUT',
           body: chunk,
-          headers: { 'Content-Type': file.type || 'video/mp4' },
+          headers: { 'Content-Type': file.type || 'application/octet-stream' },
         });
+
         if (!uploadRes.ok) throw new Error(`Upload part ${partNumber} failed`);
 
         const eTag = uploadRes.headers.get('ETag')?.replaceAll('"', '');
         uploadedParts.push({ PartNumber: partNumber, ETag: eTag });
         uploadedBytes += chunk.size;
-        setUploadProgress(Math.round((uploadedBytes / file.size) * 100));
+        setProgress(Math.round((uploadedBytes / file.size) * 100));
       };
 
-      const workers = Array.from({ length: Math.min(concurrency, totalParts) }, async () => {
+      const workers = Array.from({ length: Math.min(partConcurrency, totalParts) }, async () => {
         while (nextPart <= totalParts) {
           const partNumber = nextPart;
           nextPart += 1;
           await uploadPart(partNumber);
         }
       });
-      await Promise.all(workers);
 
+      await Promise.all(workers);
       uploadedParts.sort((a, b) => a.PartNumber - b.PartNumber);
-      await adminService.completeCourseVideoUpload(courseId, {
+
+      await completeUpload({
         key: uploadSession.key,
         uploadId: uploadSession.uploadId,
         parts: uploadedParts,
-        contentType: file.type || 'video/mp4',
+        contentType: file.type || 'application/octet-stream',
         fileSize: file.size,
       });
 
-      setUploadProgress(100);
+      setProgress(100);
+    } catch (err) {
+      if (uploadSession) {
+        await abortUpload({ key: uploadSession.key, uploadId: uploadSession.uploadId }).catch(() => {});
+      }
+      throw err;
+    }
+  };
+
+  const uploadCourseVideo = async (courseId, file) => {
+    try {
+      setUploadingCourseId(courseId);
+      await uploadMultipartFile({
+        file,
+        initUpload: () => adminService.initCourseVideoUpload(courseId, {
+          fileName: file.name,
+          contentType: file.type || 'video/mp4',
+          fileSize: file.size,
+        }),
+        completeUpload: (payload) => adminService.completeCourseVideoUpload(courseId, payload),
+        abortUpload: (payload) => adminService.abortCourseVideoUpload(payload),
+        setProgress: setUploadProgress,
+      });
       await fetchCourses();
       await loadCourseDetail(courseId);
       alert('Tải video lên thành công');
     } catch (err) {
-      if (uploadSession) {
-        await adminService.abortCourseVideoUpload({ key: uploadSession.key, uploadId: uploadSession.uploadId }).catch(() => {});
-      }
       alert(err.message || 'Không thể tải video lên');
     } finally {
       setUploadingCourseId(null);
       setUploadProgress(0);
+    }
+  };
+
+  const uploadCourseCover = async (courseId, file) => {
+    try {
+      setUploadingCoverCourseId(courseId);
+      await uploadMultipartFile({
+        file,
+        initUpload: () => adminService.initCourseCoverUpload(courseId, {
+          fileName: file.name,
+          contentType: file.type || 'image/jpeg',
+          fileSize: file.size,
+        }),
+        completeUpload: (payload) => adminService.completeCourseCoverUpload(courseId, payload),
+        abortUpload: (payload) => adminService.abortCourseCoverUpload(payload),
+        setProgress: setCoverUploadProgress,
+      });
+      await fetchCourses();
+      await loadCourseDetail(courseId);
+      alert('Tải ảnh bìa lên thành công');
+    } catch (err) {
+      alert(err.message || 'Không thể tải ảnh bìa lên');
+    } finally {
+      setUploadingCoverCourseId(null);
+      setCoverUploadProgress(0);
     }
   };
 
@@ -259,15 +301,22 @@ const AdminCourses = () => {
           ) : (
             <div className="space-y-4">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <div className="flex justify-between items-start gap-4">
-                  <div>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-28 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                        {selectedCourse.thumbnail ? (
+                          <img src={selectedCourse.thumbnail} alt={selectedCourse.title} className="w-full h-full object-cover" />
+                        ) : null}
+                      </div>
+                      <div>
                     <h2 className="text-xl font-bold text-gray-900">{selectedCourse.title}</h2>
                     <p className="text-sm text-gray-500 mt-1">
                       {selectedCourse.dynasty} &middot; {selectedCourse.difficulty} &middot; {selectedCourse.enrolledCount || 0} học viên
                     </p>
                     {selectedCourse.description && <p className="text-sm text-gray-600 mt-2">{selectedCourse.description}</p>}
-                  </div>
-                  <div className="flex gap-2 flex-shrink-0">
+                    </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
                     <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
                       {uploadingCourseId === selectedCourse._id ? `Đang tải ${uploadProgress}%` : 'Tải video'}
                       <input
@@ -282,9 +331,23 @@ const AdminCourses = () => {
                         className="hidden"
                       />
                     </label>
-                    <button onClick={() => openCourseModal(selectedCourse)} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm">
-                      Sửa nội dung
-                    </button>
+                     <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
+                       {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
+                       <input
+                         type="file"
+                         accept="image/jpeg,image/png,image/webp"
+                         disabled={uploadingCoverCourseId === selectedCourse._id}
+                         onChange={(e) => {
+                           const file = e.target.files?.[0];
+                           if (file) uploadCourseCover(selectedCourse._id, file);
+                           e.target.value = '';
+                         }}
+                         className="hidden"
+                       />
+                     </label>
+                     <button onClick={() => openCourseModal(selectedCourse)} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                       Sửa nội dung
+                     </button>
                   </div>
                 </div>
               </div>
@@ -337,8 +400,8 @@ const AdminCourses = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Ảnh bìa (URL)</label>
-            <input type="text" value={currentCourse.thumbnail || ''} onChange={(e) => setCurrentCourse({ ...currentCourse, thumbnail: e.target.value })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            <label className="block text-sm font-medium mb-1">Ảnh bìa</label>
+            <input type="text" value={currentCourse.thumbnail || ''} onChange={(e) => setCurrentCourse({ ...currentCourse, thumbnail: e.target.value })} placeholder="Sẽ tự cập nhật khi dùng nút Tải ảnh bìa ở panel chi tiết" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
           </div>
 
           <div>
@@ -346,8 +409,9 @@ const AdminCourses = () => {
             <textarea value={currentCourse.description} onChange={(e) => setCurrentCourse({ ...currentCourse, description: e.target.value })} rows={3} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
           </div>
 
-          <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg p-3">
-            Video được tải lên bằng nút <span className="font-medium">Tải video</span> ở panel chi tiết khóa học và lưu private trong MinIO.
+          <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg p-3 space-y-1">
+            <p>Video tải lên bằng nút <span className="font-medium">Tải video</span> ở panel chi tiết và lưu private trong MinIO.</p>
+            <p>Ảnh bìa tải lên bằng nút <span className="font-medium">Tải ảnh bìa</span> và dùng signed URL từ MinIO.</p>
           </div>
 
           <div>

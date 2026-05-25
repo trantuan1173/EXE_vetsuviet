@@ -71,10 +71,37 @@ const courseController = {
     }
   },
 
+  initCourseCoverUpload: async (req, res, next) => {
+    try {
+      const result = await courseService.initCourseCoverUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Cover upload initialized', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  completeCourseCoverUpload: async (req, res, next) => {
+    try {
+      const result = await courseService.completeCourseCoverUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Cover upload completed', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   abortCourseVideoUpload: async (req, res, next) => {
     try {
       await courseService.abortCourseVideoUpload(req.body);
       sendResponse(res, 200, true, 'Upload aborted');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  abortCourseCoverUpload: async (req, res, next) => {
+    try {
+      await courseService.abortCourseCoverUpload(req.body);
+      sendResponse(res, 200, true, 'Cover upload aborted');
     } catch (error) {
       next(error);
     }

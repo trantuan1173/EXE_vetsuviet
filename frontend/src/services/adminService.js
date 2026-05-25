@@ -17,6 +17,9 @@ const adminService = {
   signCourseVideoPart: (data) => api.post('/admin/courses/video/sign-part', data),
   completeCourseVideoUpload: (id, data) => api.post(`/admin/courses/${id}/video/complete`, data),
   abortCourseVideoUpload: (data) => api.post('/admin/courses/video/abort', data),
+  initCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/init`, data),
+  completeCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/complete`, data),
+  abortCourseCoverUpload: (data) => api.post('/admin/courses/cover/abort', data),
 
   // Quizzes
   getAllQuizzes: (params) => api.get('/admin/quizzes', { params }),

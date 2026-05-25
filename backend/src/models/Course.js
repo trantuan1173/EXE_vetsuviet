@@ -46,6 +46,19 @@ const courseSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    coverImageKey: {
+      type: String,
+      default: null,
+    },
+    coverImageMimeType: {
+      type: String,
+      default: null,
+    },
+    coverImageSize: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     duration: {
       type: Number,
       default: 0,
