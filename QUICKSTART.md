@@ -24,6 +24,24 @@ mongod
 # Cập nhật MONGO_URI trong backend/.env
 ```
 
+### (Tuỳ chọn) Cấu hình MinIO/S3 service riêng
+
+Dự án không còn chạy MinIO trong Docker Compose.  
+Nếu cần test chức năng upload/playback video, cấu hình thêm trong `backend/.env`:
+
+```env
+S3_ENDPOINT=http://<your-minio-host>:9000
+S3_PUBLIC_ENDPOINT=http://<public-host-or-domain>:9000
+S3_REGION=us-east-1
+S3_BUCKET=vetsuviet-videos
+S3_ACCESS_KEY_ID=your_access_key
+S3_SECRET_ACCESS_KEY=your_secret_key
+S3_FORCE_PATH_STYLE=true
+VIDEO_PLAYBACK_URL_TTL_SECONDS=600
+```
+
+Nếu không cấu hình các biến trên, backend vẫn chạy bình thường cho các chức năng không phụ thuộc video storage.
+
 ## Bước 3: Chạy Backend
 
 ```bash
