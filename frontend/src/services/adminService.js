@@ -27,6 +27,17 @@ const adminService = {
   updateQuiz: (id, data) => api.put(`/admin/quizzes/${id}`, data),
   deleteQuiz: (id) => api.delete(`/admin/quizzes/${id}`),
 
+  // Quiz Excel import/export
+  downloadQuizTemplate: () =>
+    api.get('/admin/quizzes/template', { responseType: 'blob' }),
+  importQuizQuestions: (quizId, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/admin/quizzes/${quizId}/import`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
   // Questions
   getQuestionsByQuiz: (quizId) => api.get(`/admin/quizzes/${quizId}/questions`),
   createQuestion: (data) => api.post('/admin/questions', data),
