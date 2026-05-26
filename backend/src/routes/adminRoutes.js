@@ -79,6 +79,10 @@ router.get('/products', productController.getAllProductsAdmin);
 router.post('/products', productController.createProduct);
 router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
+router.post('/products/:id/image/init', productController.initProductImageUpload);
+router.post('/products/:id/image/complete', productController.completeProductImageUpload);
+router.post('/products/image/abort', productController.abortProductImageUpload);
+router.delete('/products/:id/image', productController.deleteProductImage);
 
 // Order management
 router.get('/orders', orderController.getAllOrders);

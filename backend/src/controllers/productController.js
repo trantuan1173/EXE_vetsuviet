@@ -1,5 +1,9 @@
 const productService = require('../services/productService');
 const { sendResponse } = require('../utils/response');
+const storage = require('../services/storageService');
+const Product = require('../models/Product');
+
+const PRESIGNED_TTL_SECONDS = parseInt(process.env.IMAGE_PLAYBACK_URL_TTL_SECONDS || '3600', 10);
 
 const productController = {
   // GET /api/products
@@ -70,6 +74,82 @@ const productController = {
     try {
       await productService.deleteProduct(req.params.id);
       sendResponse(res, 200, true, 'Product deleted');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // ---- Product Image Upload (MinIO) ----
+  initProductImageUpload: async (req, res, next) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return sendResponse(res, 404, false, 'Product not found');
+
+      const { fileName, contentType } = req.body;
+      const key = `products/${product._id}/${Date.now()}-${fileName}`;
+
+      await storage.ensureBucket();
+      const { UploadId } = await storage.createMultipartUpload({ key, contentType });
+      const signedUrl = await storage.getUploadPartSignedUrl({ key, uploadId: UploadId, partNumber: 1 });
+
+      sendResponse(res, 200, true, 'Upload initiated', { key, uploadId: UploadId, signedUrl });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  completeProductImageUpload: async (req, res, next) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return sendResponse(res, 404, false, 'Product not found');
+
+      const { key, uploadId, parts } = req.body;
+      await storage.completeMultipartUpload({ key, uploadId, parts });
+
+      product.images.push({ url: '', key });
+      await product.save();
+
+      const newImage = product.images[product.images.length - 1];
+      // Generate signed URL for the newly uploaded image
+      const signedUrl = await storage.getSignedPlaybackUrl(key, PRESIGNED_TTL_SECONDS);
+      const imageResponse = { ...newImage.toObject(), url: signedUrl };
+      sendResponse(res, 200, true, 'Image uploaded', { image: imageResponse });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  abortProductImageUpload: async (req, res, next) => {
+    try {
+      const { key, uploadId } = req.body;
+      await storage.abortMultipartUpload({ key, uploadId });
+      sendResponse(res, 200, true, 'Upload aborted');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // DELETE /api/admin/products/:id/image - xoá 1 ảnh khỏi product
+  deleteProductImage: async (req, res, next) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return sendResponse(res, 404, false, 'Product not found');
+
+      const { imageKey } = req.body;
+      if (!imageKey) return sendResponse(res, 400, false, 'imageKey is required');
+
+      // Remove from MinIO
+      try {
+        await storage.deleteObject(imageKey);
+      } catch (_) {
+        // Ignore if already deleted in MinIO
+      }
+
+      // Remove from product.images array
+      product.images = product.images.filter((img) => img.key !== imageKey);
+      await product.save();
+
+      sendResponse(res, 200, true, 'Image deleted', { images: product.images });
     } catch (error) {
       next(error);
     }

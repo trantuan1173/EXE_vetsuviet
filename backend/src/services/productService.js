@@ -1,5 +1,29 @@
 const Product = require('../models/Product');
+const storageService = require('./storageService');
 const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } = require('../utils/constants');
+
+const PRESIGNED_TTL_SECONDS = parseInt(process.env.IMAGE_PLAYBACK_URL_TTL_SECONDS || '3600', 10);
+
+const withSignedImageUrls = async (product) => {
+  if (!product) return product;
+  const plain = typeof product.toObject === 'function' ? product.toObject() : { ...product };
+  if (!plain.images || plain.images.length === 0) return plain;
+
+  plain.images = await Promise.all(
+    plain.images.map(async (img) => {
+      if (!img.key) return img;
+      try {
+        const signedUrl = await storageService.getSignedPlaybackUrl(img.key, PRESIGNED_TTL_SECONDS);
+        return { ...img, url: signedUrl };
+      } catch {
+        return img;
+      }
+    })
+  );
+  return plain;
+};
+
+const withSignedImageUrlsAll = async (products) => Promise.all((products || []).map(withSignedImageUrls));
 
 const productService = {
   // Get products with pagination and filters
@@ -18,12 +42,13 @@ const productService = {
     const skip = (parseInt(page) - 1) * safeLimit;
 
     const [products, total] = await Promise.all([
-      Product.find(query).sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
+      Product.find(query).populate('courses', 'title').sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
       Product.countDocuments(query),
     ]);
 
+    const normalizedProducts = await withSignedImageUrlsAll(products);
     return {
-      products,
+      products: normalizedProducts,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / safeLimit),
@@ -35,9 +60,9 @@ const productService = {
 
   // Get product detail
   getProductDetail: async (productId) => {
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate('courses', 'title');
     if (!product) throw new Error('Product not found');
-    return product;
+    return withSignedImageUrls(product);
   },
 
   // Get all categories
@@ -73,12 +98,13 @@ const productService = {
     const skip = (parseInt(page) - 1) * safeLimit;
 
     const [products, total] = await Promise.all([
-      Product.find().sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
+      Product.find().populate('courses', 'title').sort({ createdAt: -1 }).skip(skip).limit(safeLimit),
       Product.countDocuments(),
     ]);
 
+    const normalizedProducts = await withSignedImageUrlsAll(products);
     return {
-      products,
+      products: normalizedProducts,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / safeLimit),

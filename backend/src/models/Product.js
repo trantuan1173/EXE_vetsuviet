@@ -21,10 +21,18 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Price is required'],
       min: 0,
     },
-    image: {
-      type: String,
-      default: null,
-    },
+    images: [
+      {
+        url: { type: String, required: true },
+        key: { type: String, required: true },
+      },
+    ],
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+      },
+    ],
     stock: {
       type: Number,
       default: 0,
