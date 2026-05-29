@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import adminService from '../services/adminService';
 import courseService from '../services/courseService';
+import { DYNASTIES } from '../utils/constants';
 import AdminLayout from '../components/Layout/AdminLayout';
 import Loading from '../components/Common/Loading';
 
@@ -387,7 +388,12 @@ const AdminCourses = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Triều đại *</label>
-              <input type="text" required value={currentCourse.dynasty} onChange={(e) => setCurrentCourse({ ...currentCourse, dynasty: e.target.value })} placeholder="VD: Nhà Trần" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+              <select required value={currentCourse.dynasty} onChange={(e) => setCurrentCourse({ ...currentCourse, dynasty: e.target.value })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                <option value="">-- Chọn thời kỳ --</option>
+                {DYNASTIES.map((d) => (
+                  <option key={d.value} value={d.value}>{d.label}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Độ khó</label>
