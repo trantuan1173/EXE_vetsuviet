@@ -20,6 +20,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import UserProfile from './pages/UserProfile';
 import NotFound from './pages/NotFound';
+import AboutUs from './pages/AboutUs';
 
 // Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -56,6 +57,7 @@ function PublicLayout() {
               </ProtectedRoute>
             }
           />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
           <Route

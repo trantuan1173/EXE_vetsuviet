@@ -9,7 +9,7 @@ const navItems = [
   { to: '/courses', label: 'Khóa học' },
   { to: '/shop', label: 'Sản phẩm' },
   { to: '/#community', label: 'Cộng đồng' },
-  { to: '/#about', label: 'Về chúng tôi' },
+  { to: '/about', label: 'Về chúng tôi' },
 ];
 
 const Navbar = () => {
