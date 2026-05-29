@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import Card from '../Common/Card';
-import { formatCurrency } from '../../utils/formatters';
 
 const CourseCard = ({ course }) => {
   const difficultyColors = {

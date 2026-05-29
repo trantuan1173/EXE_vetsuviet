@@ -12,16 +12,19 @@ const ALLOWED_COVER_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/web
 
 const withSignedCoverUrl = async (course) => {
   if (!course) return course;
-  if (!course.coverImageKey) return course;
 
-  const signedUrl = await storageService.getSignedPlaybackUrl(course.coverImageKey, PRESIGNED_TTL_SECONDS);
-  if (typeof course.toObject === 'function') {
-    const plain = course.toObject();
+  const plain = typeof course.toObject === 'function' ? course.toObject() : { ...course };
+
+  if (!course.coverImageKey) return plain;
+
+  try {
+    const signedUrl = await storageService.getSignedPlaybackUrl(course.coverImageKey, PRESIGNED_TTL_SECONDS);
     plain.thumbnail = signedUrl;
-    return plain;
+  } catch {
+    // Storage not configured or unavailable – keep existing thumbnail (if any)
   }
 
-  return { ...course, thumbnail: signedUrl };
+  return plain;
 };
 
 const withSignedCoverUrls = async (courses) => Promise.all((courses || []).map(withSignedCoverUrl));

@@ -32,8 +32,8 @@ const CourseFilter = ({ filters, onFilterChange }) => {
           >
             <option value="">Tất cả</option>
             {DYNASTIES.map((d) => (
-              <option key={d} value={d}>
-                {d}
+              <option key={d.value} value={d.value}>
+                {d.label}
               </option>
             ))}
           </select>
