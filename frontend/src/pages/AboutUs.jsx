@@ -84,7 +84,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F8F3EB] border border-[#DEBFBC] p-10 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[73px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '180px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Vết
                         </span>
@@ -121,7 +121,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F2EDE5] border border-[#DEBFBC] p-10 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[145px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '180px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Sử
                         </span>
@@ -158,7 +158,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F8F3EB] border border-[#DEBFBC] p-10 pb-16 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[1px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '180px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Việt
                         </span>
