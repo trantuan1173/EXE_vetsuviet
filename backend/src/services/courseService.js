@@ -42,6 +42,16 @@ const courseService = {
     return { courses: normalizedCourses, pagination: { currentPage: parseInt(page), totalPages: Math.ceil(total / safeLimit), totalItems: total, itemsPerPage: safeLimit } };
   },
 
+  getRandomCourses: async ({ limit = 3 }) => {
+    const safeLimit = Math.min(parseInt(limit), 10);
+    const courses = await Course.aggregate([
+      { $match: { isPublished: true } },
+      { $sample: { size: safeLimit } }
+    ]);
+    const normalizedCourses = await withSignedCoverUrls(courses);
+    return { courses: normalizedCourses };
+  },
+
   getCourseDetail: async (courseId) => {
     const course = await Course.findById(courseId);
     if (!course) throw new Error('Course not found');

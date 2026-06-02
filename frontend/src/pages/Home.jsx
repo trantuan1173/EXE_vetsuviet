@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import heroBg from '../assets/Nen web 1.png';
+import courseService from '../services/courseService';
 
 const featureCards = [
   {
@@ -23,28 +25,29 @@ const featureCards = [
   },
 ];
 
-const eraCards = [
-  {
-    title: 'Thời kỳ dựng nước',
-    subtitle: 'Nền văn minh đầu tiên',
-    lessons: '12/20 bài học',
-    progress: 60,
-  },
-  {
-    title: 'Thời kỳ phong kiến',
-    subtitle: 'Đấu tranh giành độc lập',
-    lessons: '18/30 bài học',
-    progress: 60,
-  },
-  {
-    title: 'Thời kỳ cận đại',
-    subtitle: 'Giành độc lập dân tộc',
-    lessons: '15/25 bài học',
-    progress: 60,
-  },
-];
-
 const Home = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRandomCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await courseService.getRandomCourses(3);
+        setCourses(response.data.data.courses || []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching random courses:', err);
+        setError('Không thể tải khóa học');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRandomCourses();
+  }, []);
+
   return (
     <div className="bg-[#FFF7E4] text-[#111827]">
       <section
@@ -103,29 +106,52 @@ const Home = () => {
               thức.
             </p>
           </div>
-          <button className="self-start lg:self-auto border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-8 py-3 rounded">
+          <Link
+            to="/courses"
+            className="self-start lg:self-auto border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-8 py-3 rounded"
+          >
             Xem tất cả khóa học
-          </button>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {eraCards.map((era) => (
-            <article key={era.title} className="rounded-xl border border-[#DED9D2] bg-white shadow-sm overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-[#6F0D0D] to-[#D4AF37]" />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold mb-2">{era.title}</h3>
-                <p className="text-[#6B7280] mb-5">{era.subtitle}</p>
-                <div className="flex items-center justify-between text-xs text-[#9CA3AF] mb-3">
-                  <span>{era.lessons}</span>
-                  <span>{era.progress}%</span>
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#6F0D0D] border-r-transparent"></div>
+            <p className="mt-4 text-[#4B5563]">Đang tải khóa học...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-600">{error}</p>
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[#4B5563]">Chưa có khóa học nào</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {courses.map((course) => (
+              <Link
+                key={course._id}
+                to={`/courses/${course._id}`}
+                className="rounded-xl border border-[#DED9D2] bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                {course.thumbnail ? (
+                  <img src={course.thumbnail} alt={course.title} className="h-48 w-full object-cover" />
+                ) : (
+                  <div className="h-48 bg-gradient-to-br from-[#6F0D0D] to-[#D4AF37]" />
+                )}
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold mb-2 line-clamp-2">{course.title}</h3>
+                  <p className="text-[#6B7280] mb-5 line-clamp-2">{course.description || 'Khóa học lịch sử Việt Nam'}</p>
+                  <div className="flex items-center justify-between text-sm text-[#9CA3AF]">
+                    <span>{course.dynasty || 'Lịch sử'}</span>
+                    <span>{course.difficulty || 'Trung bình'}</span>
+                  </div>
                 </div>
-                <div className="h-2 rounded-full bg-[#F3F4F6]">
-                  <div className="h-2 rounded-full bg-[#D4AF37]" style={{ width: `${era.progress}%` }} />
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-[1232px] px-6">

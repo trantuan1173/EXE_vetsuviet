@@ -12,6 +12,16 @@ const courseController = {
     }
   },
 
+  getRandomCourses: async (req, res, next) => {
+    try {
+      const { limit } = req.query;
+      const result = await courseService.getRandomCourses({ limit });
+      sendResponse(res, 200, true, 'Random courses retrieved', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   getCourseDetail: async (req, res, next) => {
     try {
       const result = await courseService.getCourseDetail(req.params.id);
