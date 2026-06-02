@@ -4,6 +4,7 @@ import ProductCard from '../components/Shop/ProductCard';
 import Pagination from '../components/Common/Pagination';
 import Loading from '../components/Common/Loading';
 import { useNotification } from '../hooks/useNotification';
+import heroBg from '../assets/Nen web 1.png';
 
 const Shop = () => {
   const { error } = useNotification();
@@ -117,7 +118,7 @@ const Shop = () => {
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
-            backgroundImage: 'url("/src/assets/Nen web 1.png")',
+            backgroundImage: `url(${heroBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: 0.3
