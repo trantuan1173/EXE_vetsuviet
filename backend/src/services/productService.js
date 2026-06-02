@@ -112,6 +112,19 @@ const productService = {
       },
     };
   },
+
+  // Get products by course ID
+  getProductsByCourse: async (courseId, limit = 3) => {
+    const products = await Product.find({
+      courses: courseId,
+      isPublished: true,
+      stock: { $gt: 0 },
+    })
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    return withSignedImageUrlsAll(products);
+  },
 };
 
 module.exports = productService;

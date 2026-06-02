@@ -6,6 +6,9 @@ const productService = {
   getProductDetail: (id) => api.get(`/products/${id}`),
 
   getCategories: () => api.get('/products/categories'),
+
+  getProductsByCourse: (courseId, limit = 3) => 
+    api.get(`/products/course/${courseId}`, { params: { limit } }),
 };
 
 export default productService;

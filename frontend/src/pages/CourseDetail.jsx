@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import courseService from '../services/courseService';
-import Button from '../components/Common/Button';
+import productService from '../services/productService';
 import Loading from '../components/Common/Loading';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
@@ -13,12 +13,28 @@ const CourseDetail = () => {
   const { success, error } = useNotification();
 
   const [course, setCourse] = useState(null);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     fetchCourseDetail();
+    fetchProducts();
   }, [id]);
+
+  const fetchProducts = async () => {
+    setProductsLoading(true);
+    try {
+      const response = await productService.getProductsByCourse(id, 3);
+      setProducts(response.data.data.products || []);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setProducts([]);
+    } finally {
+      setProductsLoading(false);
+    }
+  };
 
   const fetchCourseDetail = async () => {
     setLoading(true);
@@ -58,89 +74,249 @@ const CourseDetail = () => {
   if (loading) return <Loading fullPage />;
   if (!course) return null;
 
-  const difficultyLabels = {
-    basic: 'Cơ bản',
-    intermediate: 'Trung bình',
-    advanced: 'Nâng cao',
-  };
+  // Mock data for leaderboard
+  const leaderboard = [
+    {
+      rank: 1,
+      name: 'Quốc Anh',
+      level: 'Học giả kì cựu',
+      xp: '12,450 XP',
+      avatar: 'https://i.pravatar.cc/40?img=1',
+      highlight: true,
+    },
+    {
+      rank: 2,
+      name: 'Minh Nhung',
+      level: 'Đang nỗ lực',
+      xp: '10,800 XP',
+      avatar: 'https://i.pravatar.cc/40?img=2',
+    },
+    {
+      rank: 3,
+      name: 'Đăng Khoa',
+      level: 'Học viên mới',
+      xp: '9,200 XP',
+      avatar: 'https://i.pravatar.cc/40?img=3',
+    },
+    {
+      rank: 4,
+      name: 'Đăng Khoa',
+      level: 'Học viên mới',
+      xp: '9,200 XP',
+      avatar: 'https://i.pravatar.cc/40?img=4',
+    },
+    {
+      rank: 5,
+      name: 'Đăng Khoa',
+      level: 'Học viên mới',
+      xp: '9,200 XP',
+      avatar: 'https://i.pravatar.cc/40?img=5',
+    },
+  ];
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <button onClick={() => navigate('/courses')} className="text-primary-600 hover:text-primary-700 font-medium mb-4">
-            ← Quay lại
-          </button>
+    <div className="bg-[#FFF7E4] min-h-screen pt-10">
+
+      <div className="max-w-[1366px] mx-auto px-9 ">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 mb-6">
+          <Link to="/" className="text-[#6F0D0D] text-sm font-bold tracking-[0.05em]">
+            Trang chủ
+          </Link>
+          <svg width="4" height="7" viewBox="0 0 4 7" fill="none" className="mx-2">
+            <path d="M0.5 0.5L3.5 3.5L0.5 6.5" stroke="#6F0D0D" strokeLinecap="round" />
+          </svg>
+          <span className="text-[#6F0D0D] text-sm font-bold tracking-[0.05em]">
+            {course.title}
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="mb-6 rounded-xl overflow-hidden bg-gray-200 aspect-video">
-              <img
-                src={course.thumbnail || 'https://placehold.co/800x450/DC2626/FFFFFF?text=VSV'}
-                alt={course.title}
-                className="w-full h-full object-cover"
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-[970px_341px] gap-8">
+          {/* Left Column */}
+          <div className="space-y-8 pb-20">
+            {/* Hero Section */}
+            <div className="rounded-2xl p-16 relative overflow-hidden">
+              {/* Background Image with Opacity */}
+              {course.thumbnail && (
+                <div 
+                  className="absolute inset-0 bg-cover bg-center opacity-50"
+                  style={{ backgroundImage: `url(${course.thumbnail})` }}
+                />
+              )}
+              {/* White overlay for better text readability */}
+              <div className="absolute inset-0 bg-white/30" />
+              
+              <div className="relative z-10">
+                {/* Dynasty Badge */}
+                <div className="inline-flex items-center bg-[#FFDDAF] rounded-full px-3 py-1 mb-2">
+                  <span className="text-[#6F0D0D] text-sm font-semibold tracking-[0.05em]">
+                    {course.dynasty || 'Thời Trần'}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h1 className="text-[#6F0D0D] text-5xl font-semibold leading-[52.8px] tracking-[-0.02em] mb-6" style={{ fontFamily: 'Hepta Slab, serif' }}>
+                  {course.title.toUpperCase()}
+                </h1>
+
+                {/* Description */}
+                <p className="text-[#6F0D0D] text-base leading-6 mb-8 max-w-[448px]">
+                  {course.description || 'Description'}
+                </p>
+
+                {/* Buttons */}
+                <div className="flex gap-4 mb-6">
+                  <button
+                    onClick={() => navigate(`/courses/${id}/learn`)}
+                    className="bg-white text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
+                  >
+                    Tiếp tục học
+                  </button>
+                  <button
+                    onClick={handleEnroll}
+                    disabled={enrolling}
+                    className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
+                  >
+                    {enrolling ? 'Đang xử lý...' : 'Vào Học'}
+                  </button>
+                </div>
+
+                {/* Features List */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                      <path d="M2.83 8.5L6.75 12.42L14.17 5" stroke="#1E1E1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-black text-sm leading-6">Truy cập vĩnh viễn</span>
+                  </div>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                      <path d="M2.83 8.5L6.75 12.42L14.17 5" stroke="#1E1E1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-black text-sm leading-6">Lý thuyết + Video</span>
+                  </div>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                      <path d="M2.83 8.5L6.75 12.42L14.17 5" stroke="#1E1E1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-black text-sm leading-6">Quiz tương tác</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-sm font-medium text-primary-600 bg-primary-50 px-3 py-1 rounded">
-                  {course.dynasty}
-                </span>
-                <span className="text-sm font-medium text-yellow-700 bg-yellow-50 px-3 py-1 rounded">
-                  {difficultyLabels[course.difficulty]}
-                </span>
+            {/* Leaderboard Section */}
+            <div className="bg-[rgba(255,210,105,0.7)] rounded-2xl p-6 shadow-[0_4px_12px_0_rgba(111,13,13,0.08)]">
+              {/* Header */}
+              <div className="flex items-center gap-2 pb-4 border-b border-[rgba(222,191,188,0.3)] mb-6">
+                <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+                  <path d="M10 0L12.245 6.755L19 9L12.245 11.245L10 18L7.755 11.245L1 9L7.755 6.755L10 0Z" fill="#4B0003" />
+                </svg>
+                <h2 className="text-[#281713] text-2xl font-medium" style={{ fontFamily: 'EB Garamond, serif' }}>
+                  BẢNG XẾP HẠNG
+                </h2>
               </div>
 
-              <h1 className="text-3xl font-heading font-bold text-gray-900 mb-3">{course.title}</h1>
-              <p className="text-gray-600 text-lg mb-4">{course.description}</p>
-
-              <div className="flex items-center gap-6 text-sm text-gray-600">
-                <span>👥 {course.enrolledCount || 0} học viên</span>
-                {course.duration > 0 && <span>⏱ {course.duration} phút</span>}
-                <span>❓ Quiz tương tác</span>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-heading font-semibold text-gray-900 mb-4">Nội dung khóa học</h2>
+              {/* Leaderboard List */}
               <div className="space-y-4">
-                <div className="border border-gray-100 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">Phần lý thuyết</h3>
-                  <p className="text-gray-600 text-sm">
-                    {course.content ? 'Đọc nội dung lý thuyết chi tiết của khóa học.' : 'Khóa học chưa có nội dung lý thuyết.'}
-                  </p>
-                </div>
-                <div className="border border-gray-100 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">Video bài học</h3>
-                  <p className="text-gray-600 text-sm">
-                    {course.videoUrl ? 'Xem video minh họa và bài giảng.' : 'Khóa học chưa có video.'}
-                  </p>
-                </div>
-                <div className="border border-gray-100 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">Quiz kiểm tra</h3>
-                  <p className="text-gray-600 text-sm">Làm bài quiz sau khi học xong để nhận XP.</p>
-                </div>
+                {leaderboard.map((user) => (
+                  <div
+                    key={user.rank}
+                    className={`flex items-center justify-between p-2 rounded-lg ${
+                      user.highlight ? 'bg-[#FFF1ED]' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Rank */}
+                      <div className="w-6">
+                        <span className={`text-base font-bold ${user.highlight ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                          {user.rank}
+                        </span>
+                      </div>
+
+                      {/* Avatar */}
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+
+                      {/* Name & Level */}
+                      <div>
+                        <div className={`text-sm leading-5 ${user.highlight ? 'font-normal' : 'font-normal'}`}>
+                          {user.name}
+                        </div>
+                        <div className="text-[#57413F] text-[10px] leading-[15px]">
+                          {user.level}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* XP */}
+                    <div className={`text-base font-semibold ${user.highlight ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                      {user.xp}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-20">
-              <div className="mb-6">
-                <p className="text-sm text-gray-600 mb-2">Bắt đầu học ngay</p>
-                <Button onClick={handleEnroll} disabled={enrolling} size="lg" className="w-full">
-                  {enrolling ? 'Đang xử lý...' : 'Vào học'}
-                </Button>
-              </div>
+          {/* Right Column - Products Sidebar */}
+          <div className="lg:sticky lg:top-24 h-fit">
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-[#6F0D0D]">Sản phẩm liên quan</h2>
+              
+              {productsLoading ? (
+                <div className="text-center py-8">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#6F0D0D] border-t-transparent"></div>
+                </div>
+              ) : products.length > 0 ? (
+                products.map((product) => (
+                  <div
+                    key={product._id}
+                    className="bg-white rounded-2xl p-4 shadow-[0_4px_12px_0_rgba(111,13,13,0.08)] border border-[#DED9D2]"
+                  >
+                    {/* Product Image */}
+                    <div className="w-full aspect-square mb-4 rounded-xl overflow-hidden bg-gray-100">
+                      <img
+                        src={product.images?.[0]?.url || 'https://placehold.co/300x300/6F0D0D/FFFFFF?text=Product'}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-              <div className="space-y-3 text-sm text-gray-600">
-                <div className="flex items-center gap-2"><span>✓</span><span>Truy cập vĩnh viễn</span></div>
-                <div className="flex items-center gap-2"><span>✓</span><span>Lý thuyết + video</span></div>
-                <div className="flex items-center gap-2"><span>✓</span><span>Quiz tương tác</span></div>
-                <div className="flex items-center gap-2"><span>✓</span><span>Kiếm XP & Level up</span></div>
-              </div>
+                    {/* Product Name */}
+                    <h3 className="text-lg font-bold text-[#4B0003] mb-2 line-clamp-2">
+                      {product.name}
+                    </h3>
+
+                    {/* Product Description */}
+                    {product.description && (
+                      <p className="text-sm text-[#57413F] mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+
+                    {/* Price */}
+                    <div className="text-2xl font-bold text-[#D8A85D] mb-4">
+                      {product.price.toLocaleString('vi-VN')}đ
+                    </div>
+
+                    {/* Buy Button */}
+                    <button
+                      onClick={() => navigate(`/shop/products/${product._id}`)}
+                      className="w-full bg-[#D8A85D] text-white font-bold text-base px-6 py-3 rounded-lg shadow-[0_2px_4px_-2px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-lg hover:bg-[#c99a4d] transition-all"
+                    >
+                      Mua ngay
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-[#57413F]">
+                  Chưa có sản phẩm liên quan
+                </div>
+              )}
             </div>
           </div>
         </div>

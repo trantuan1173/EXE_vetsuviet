@@ -37,6 +37,17 @@ const productController = {
     }
   },
 
+  // GET /api/products/course/:courseId
+  getProductsByCourse: async (req, res, next) => {
+    try {
+      const { limit } = req.query;
+      const products = await productService.getProductsByCourse(req.params.courseId, limit);
+      sendResponse(res, 200, true, 'Products retrieved', { products });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // ---- ADMIN ----
   // GET /api/admin/products
   getAllProductsAdmin: async (req, res, next) => {
