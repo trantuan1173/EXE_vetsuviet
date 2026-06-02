@@ -10,7 +10,6 @@ const navItems = [
   { to: '/', label: 'Trang chủ' },
   { to: '/courses', label: 'Khóa học' },
   { to: '/shop', label: 'Sản phẩm' },
-  { to: '/#community', label: 'Cộng đồng' },
   { to: '/about', label: 'Về chúng tôi' },
 ];
 
