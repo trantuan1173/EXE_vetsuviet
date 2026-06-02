@@ -20,6 +20,7 @@ const Navbar = () => {
   const { totalItems } = useCart();
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({ courses: [], products: [] });
   const [loading, setLoading] = useState(false);
@@ -52,7 +53,10 @@ const Navbar = () => {
   // Close on Escape
   useEffect(() => {
     const handleKey = (e) => {
-      if (e.key === 'Escape') setSearchOpen(false);
+      if (e.key === 'Escape') {
+        setSearchOpen(false);
+        setMobileMenuOpen(false);
+      }
     };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
@@ -65,12 +69,25 @@ const Navbar = () => {
     }
   }, [searchOpen]);
 
-  // Close search when navigating
+  // Close menus when navigating
   useEffect(() => {
     setSearchOpen(false);
+    setMobileMenuOpen(false);
     setQuery('');
     setResults({ courses: [], products: [] });
   }, [location.pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
 
   const doSearch = useCallback(async (q) => {
     if (!q || q.trim().length < 2) {
@@ -113,13 +130,15 @@ const Navbar = () => {
 
   return (
     <nav className={navClassName}>
-      <div className="mx-auto max-w-[1440px] px-8">
-        <div className="flex items-center justify-between min-h-[80px]">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={logoIcon} alt="Vết Sử Việt Logo" className="h-[78px] w-auto" />
-            <img src={logoText} alt="Vết Sử Việt" className="h-[51px] w-auto" />
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between min-h-[64px] sm:min-h-[80px]">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 z-50">
+            <img src={logoIcon} alt="Vết Sử Việt Logo" className="h-12 sm:h-16 lg:h-[78px] w-auto" />
+            <img src={logoText} alt="Vết Sử Việt" className="h-8 sm:h-10 lg:h-[51px] w-auto hidden xs:block" />
           </Link>
 
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-12">
             {navItems.map((item) => {
               const active = isActive(item.to);
@@ -140,15 +159,16 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex items-center gap-3 md:gap-4">
+          {/* Right side actions */}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 z-50">
             {/* Search button */}
             <div ref={searchRef} className="relative">
               <button
                 onClick={toggleSearch}
-                className="text-white hover:text-[#FFD36E] transition-colors p-1"
+                className="text-white hover:text-[#FFD36E] transition-colors p-1.5 sm:p-1"
                 aria-label="Tìm kiếm"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -159,7 +179,7 @@ const Navbar = () => {
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 top-full mt-3 w-[380px] z-50">
+                <div className="absolute right-0 top-full mt-3 w-[calc(100vw-2rem)] sm:w-[380px] max-w-[380px] z-50">
                   {/* Search input */}
                   <div className="flex items-center bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
                     <svg
@@ -181,7 +201,7 @@ const Navbar = () => {
                       value={query}
                       onChange={handleInputChange}
                       placeholder="Tìm khóa học, sản phẩm..."
-                      className="w-full px-3 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none"
+                      className="w-full px-3 py-2.5 sm:py-3 text-sm text-gray-800 placeholder-gray-400 outline-none"
                     />
                     {query && (
                       <button
@@ -297,25 +317,9 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Cart */}
-            <Link to="/cart" className="relative text-white hover:text-[#FFD36E] transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#FFD36E] text-[#6F0D0D] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-
+            {/* Desktop Auth */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="hidden sm:flex items-center gap-2 md:gap-3">
                 <Link to="/profile" className="flex items-center gap-2 text-white hover:text-[#FFD36E] transition-colors">
                   <div className="w-8 h-8 rounded-full bg-[#FFD36E]/20 flex items-center justify-center">
                     <span className="font-semibold text-sm text-white">
@@ -334,29 +338,155 @@ const Navbar = () => {
                   </Link>
                 )}
 
-                <button onClick={logout} className="text-sm text-white/90 hover:text-red-200">
+                <button onClick={logout} className="hidden md:block text-sm text-white/90 hover:text-red-200">
                   Đăng xuất
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 sm:gap-3">
                 <Link
                   to="/login"
-                  className="w-[124px] h-[38px] rounded-[7px] border border-[#FFD36E] flex items-center justify-center text-white font-['Hepta_Slab'] text-[15px] font-bold tracking-[-0.02em] hover:bg-white/10"
+                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] border border-[#FFD36E] flex items-center justify-center text-white font-['Hepta_Slab'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:bg-white/10"
                 >
                   Đăng nhập
                 </Link>
                 <Link
                   to="/register"
-                  className="w-[124px] h-[38px] rounded-[7px] bg-[#FFD36E] flex items-center justify-center text-[#601407] font-['Hepta_Slab'] text-[15px] font-bold tracking-[-0.02em] hover:opacity-95"
+                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] bg-[#FFD36E] flex items-center justify-center text-[#601407] font-['Hepta_Slab'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:opacity-95"
                 >
                   Đăng ký
                 </Link>
               </div>
             )}
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden text-white hover:text-[#FFD36E] transition-colors p-1.5"
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay & Sidebar */}
+      {mobileMenuOpen && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* Sidebar */}
+          <div className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#6F0D0D] z-50 lg:hidden shadow-2xl animate-slide-in overflow-y-auto">
+            <div className="p-6">
+              {/* Close button */}
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="absolute top-4 right-4 text-white/80 hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              {/* User info (if authenticated) */}
+              {isAuthenticated && (
+                <div className="mb-6 pb-6 border-b border-white/20">
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-3 text-white hover:text-[#FFD36E] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-[#FFD36E]/20 flex items-center justify-center">
+                      <span className="font-semibold text-lg text-white">
+                        {user?.fullName?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{user?.fullName}</p>
+                      <p className="text-xs text-white/70">Xem hồ sơ</p>
+                    </div>
+                  </Link>
+                </div>
+              )}
+
+              {/* Navigation items */}
+              <nav className="space-y-1 mb-6">
+                {navItems.map((item) => {
+                  const active = isActive(item.to);
+                  return (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold transition-colors ${
+                        active
+                          ? 'bg-[#FFD36E] text-[#601407]'
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Auth buttons or actions */}
+              {isAuthenticated ? (
+                <div className="space-y-3">
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block w-full text-center bg-[#FFD36E] text-[#601407] px-4 py-3 rounded-lg font-bold hover:opacity-90"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-center border-2 border-white/30 text-white px-4 py-3 rounded-lg font-bold hover:bg-white/10"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center bg-[#FFD36E] text-[#601407] px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold hover:opacity-95"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center border-2 border-[#FFD36E] text-white px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold hover:bg-white/10"
+                  >
+                    Đăng ký
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 };

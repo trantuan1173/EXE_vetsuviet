@@ -9,8 +9,8 @@ const productController = {
   // GET /api/products
   getProducts: async (req, res, next) => {
     try {
-      const { page, limit, category, search } = req.query;
-      const result = await productService.getProducts({ page, limit, category, search });
+      const { page, limit, category, search, dynasty, course } = req.query;
+      const result = await productService.getProducts({ page, limit, category, search, dynasty, course });
       sendResponse(res, 200, true, 'Products retrieved', result);
     } catch (error) {
       next(error);
@@ -32,6 +32,26 @@ const productController = {
     try {
       const categories = await productService.getCategories();
       sendResponse(res, 200, true, 'Categories retrieved', categories);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // GET /api/products/dynasties
+  getDynasties: async (req, res, next) => {
+    try {
+      const dynasties = await productService.getDynasties();
+      sendResponse(res, 200, true, 'Dynasties retrieved', dynasties);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // GET /api/products/courses
+  getCourses: async (req, res, next) => {
+    try {
+      const courses = await productService.getCourses();
+      sendResponse(res, 200, true, 'Courses retrieved', courses);
     } catch (error) {
       next(error);
     }
@@ -101,9 +121,20 @@ const productController = {
 
       await storage.ensureBucket();
       const { UploadId } = await storage.createMultipartUpload({ key, contentType });
-      const signedUrl = await storage.getUploadPartSignedUrl({ key, uploadId: UploadId, partNumber: 1 });
+      
+      // Return partSize for multipart uploads
+      const partSize = 5 * 1024 * 1024; // 5MB parts
+      sendResponse(res, 200, true, 'Upload initiated', { key, uploadId: UploadId, partSize });
+    } catch (error) {
+      next(error);
+    }
+  },
 
-      sendResponse(res, 200, true, 'Upload initiated', { key, uploadId: UploadId, signedUrl });
+  signProductImagePart: async (req, res, next) => {
+    try {
+      const { key, uploadId, partNumber } = req.body;
+      const signedUrl = await storage.getUploadPartSignedUrl({ key, uploadId, partNumber });
+      sendResponse(res, 200, true, 'Part signed', { signedUrl });
     } catch (error) {
       next(error);
     }
@@ -117,12 +148,12 @@ const productController = {
       const { key, uploadId, parts } = req.body;
       await storage.completeMultipartUpload({ key, uploadId, parts });
 
-      product.images.push({ url: '', key });
+      // Generate signed URL before saving to satisfy schema validation
+      const signedUrl = await storage.getSignedPlaybackUrl(key, PRESIGNED_TTL_SECONDS);
+      product.images.push({ url: signedUrl, key });
       await product.save();
 
       const newImage = product.images[product.images.length - 1];
-      // Generate signed URL for the newly uploaded image
-      const signedUrl = await storage.getSignedPlaybackUrl(key, PRESIGNED_TTL_SECONDS);
       const imageResponse = { ...newImage.toObject(), url: signedUrl };
       sendResponse(res, 200, true, 'Image uploaded', { image: imageResponse });
     } catch (error) {

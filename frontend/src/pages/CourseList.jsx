@@ -58,24 +58,73 @@ const CourseList = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
+
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-heading font-bold text-gray-900 mb-2">
             Khóa học Lịch sử Việt Nam
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             Khám phá các triều đại lịch sử qua khóa học tương tác
           </p>
         </div>
 
+        {/* Mobile Filter Button */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setShowMobileFilter(true)}
+            className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Bộ lọc
+            {(filters.search || filters.dynasty || filters.difficulty) && (
+              <span className="ml-1 bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full">
+                {[filters.search, filters.dynasty, filters.difficulty].filter(Boolean).length}
+              </span>
+            )}
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Filter */}
-          <div className="lg:col-span-1">
+          {/* Desktop Sidebar Filter */}
+          <div className="hidden lg:block lg:col-span-1">
             <CourseFilter filters={filters} onFilterChange={handleFilterChange} />
           </div>
+
+          {/* Mobile Filter Drawer */}
+          {showMobileFilter && (
+            <>
+              <div
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                onClick={() => setShowMobileFilter(false)}
+              />
+              <div className="fixed inset-y-0 left-0 w-[280px] sm:w-[320px] bg-white z-50 lg:hidden overflow-y-auto shadow-xl">
+                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-gray-900">Bộ lọc</h2>
+                  <button
+                    onClick={() => setShowMobileFilter(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-4">
+                  <CourseFilter filters={filters} onFilterChange={(newFilters) => {
+                    handleFilterChange(newFilters);
+                    setShowMobileFilter(false);
+                  }} />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Course Grid */}
           <div className="lg:col-span-3">
@@ -87,7 +136,7 @@ const CourseList = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {courses.map((course) => (
                     <CourseCard key={course._id} course={course} />
                   ))}

@@ -102,6 +102,76 @@ const AdminProducts = () => {
     return newId;
   };
 
+  // Upload image using multipart (similar to AdminCourses)
+  const uploadSingleImage = async (productId, file) => {
+    let uploadSession = null;
+    let uploadedBytes = 0;
+
+    try {
+      // Init upload
+      const initRes = await adminService.initProductImageUpload(productId, {
+        fileName: file.name,
+        contentType: file.type,
+      });
+      uploadSession = initRes.data.data;
+
+      const partSize = uploadSession.partSize || 5 * 1024 * 1024; // 5MB default
+      const totalParts = Math.ceil(file.size / partSize);
+      const uploadedParts = [];
+
+      // Upload parts sequentially
+      for (let partNumber = 1; partNumber <= totalParts; partNumber++) {
+        const start = (partNumber - 1) * partSize;
+        const end = Math.min(start + partSize, file.size);
+        const chunk = file.slice(start, end);
+
+        // Get signed URL for this part
+        const signRes = await adminService.signProductImagePart({
+          key: uploadSession.key,
+          uploadId: uploadSession.uploadId,
+          partNumber,
+        });
+
+        // Upload to MinIO
+        const uploadRes = await fetch(signRes.data.data.signedUrl, {
+          method: 'PUT',
+          body: chunk,
+          headers: { 'Content-Type': file.type || 'image/jpeg' },
+        });
+
+        if (!uploadRes.ok) throw new Error(`Upload part ${partNumber} failed`);
+
+        const eTag = uploadRes.headers.get('ETag')?.replaceAll('"', '');
+        uploadedParts.push({ PartNumber: partNumber, ETag: eTag });
+
+        uploadedBytes += chunk.size;
+        setUploadProgress(Math.round((uploadedBytes / file.size) * 100));
+      }
+
+      // Complete upload
+      const completeRes = await adminService.completeProductImageUpload(productId, {
+        key: uploadSession.key,
+        uploadId: uploadSession.uploadId,
+        parts: uploadedParts,
+      });
+
+      const newImage = completeRes.data.data?.image;
+      if (newImage) {
+        setUploadedImages((prev) => [...prev, newImage]);
+      }
+    } catch (err) {
+      if (uploadSession) {
+        try {
+          await adminService.abortProductImageUpload({
+            key: uploadSession.key,
+            uploadId: uploadSession.uploadId,
+          });
+        } catch (_) {}
+      }
+      throw err;
+    }
+  };
+
   // Upload image immediately when file is selected
   const handleImageFileChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -113,58 +183,21 @@ const AdminProducts = () => {
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        setUploadProgress(Math.round(((i) / files.length) * 100));
-
-        let uploadKey = null;
-        let uploadId = null;
+        setUploadProgress(0);
 
         try {
-          // Init upload
-          const initRes = await adminService.initProductImageUpload(productId, {
-            fileName: file.name,
-            contentType: file.type,
-          });
-          const { key, uploadId: uid, signedUrl } = initRes.data.data;
-          uploadKey = key;
-          uploadId = uid;
-
-          // Upload to MinIO
-          const uploadRes = await fetch(signedUrl, {
-            method: 'PUT',
-            body: file,
-            headers: { 'Content-Type': file.type },
-          });
-          const eTag = uploadRes.headers.get('ETag')?.replaceAll('"', '');
-
-          // Complete upload
-          const completeRes = await adminService.completeProductImageUpload(productId, {
-            key,
-            uploadId: uid,
-            parts: [{ PartNumber: 1, ETag: eTag }],
-          });
-
-          const newImage = completeRes.data.data?.image;
-          if (newImage) {
-            setUploadedImages((prev) => [...prev, newImage]);
-          }
+          await uploadSingleImage(productId, file);
         } catch (err) {
           console.error(`Upload failed for ${file.name}`, err);
-          if (uploadKey && uploadId) {
-            try {
-              await adminService.abortProductImageUpload({ key: uploadKey, uploadId });
-            } catch (_) {}
-          }
-          alert(`Tải ảnh "${file.name}" thất bại`);
+          alert(`Tải ảnh "${file.name}" thất bại: ${err.message}`);
         }
       }
-      setUploadProgress(100);
     } catch (err) {
       console.error('Image upload failed', err);
       alert('Không thể tải ảnh lên. Vui lòng thử lại.');
     } finally {
       setUploadingImage(false);
       setUploadProgress(0);
-      // Reset input so same file can be selected again
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };

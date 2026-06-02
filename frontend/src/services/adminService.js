@@ -50,6 +50,7 @@ const adminService = {
   updateProduct: (id, data) => api.put(`/admin/products/${id}`, data),
   deleteProduct: (id) => api.delete(`/admin/products/${id}`),
   initProductImageUpload: (id, data) => api.post(`/admin/products/${id}/image/init`, data),
+  signProductImagePart: (data) => api.post('/admin/products/image/sign-part', data),
   completeProductImageUpload: (id, data) => api.post(`/admin/products/${id}/image/complete`, data),
   abortProductImageUpload: (data) => api.post('/admin/products/image/abort', data),
   deleteProductImage: (id, data) => api.delete(`/admin/products/${id}/image`, { data }),
