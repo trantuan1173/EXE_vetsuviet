@@ -294,7 +294,7 @@ const AboutUs = () => {
                     style={{ background: 'linear-gradient(90deg, rgba(75,0,3,1) 0%, rgba(75,0,3,0.8) 50%, rgba(75,0,3,1) 100%)' }}
                 />
 
-                <div className="relative z-10 max-w-[1152px] mx-auto px-6 text-center flex flex-col items-center gap-8">
+                <div className="relative z-10 max-w-[1200px] mx-auto px-6 text-center flex flex-col items-center gap-8">
                     <h2
                         className="text-white"
                         style={{ fontFamily: "'EB Garamond', serif", fontWeight: 400, fontStyle: 'italic', fontSize: '72px', lineHeight: '72px' }}

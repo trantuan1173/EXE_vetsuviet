@@ -126,7 +126,7 @@ const Shop = () => {
         />
         
         <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-16 py-12 sm:py-16 lg:py-24">
-          <div className="max-w-[672px]">
+          <div className="max-w-[900px]">
             {/* Subtitle */}
             <div className="mb-8">
               <span 
