@@ -139,7 +139,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-12">
+          <div className="hidden lg:flex flex-1 items-center justify-evenly">
             {navItems.map((item) => {
               const active = isActive(item.to);
               return (
