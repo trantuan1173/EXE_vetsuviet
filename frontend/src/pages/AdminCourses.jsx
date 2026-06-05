@@ -200,6 +200,30 @@ const AdminCourses = () => {
     }
   };
 
+  const deleteCourseVideo = async (courseId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa video của khóa học này không? Hành động này không thể hoàn tác.')) return;
+    try {
+      await adminService.deleteCourseVideo(courseId);
+      await fetchCourses();
+      await loadCourseDetail(courseId);
+      alert('Xóa video thành công');
+    } catch (err) {
+      alert(err.message || 'Không thể xóa video');
+    }
+  };
+
+  const deleteCourseCover = async (courseId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa ảnh bìa của khóa học này không? Hành động này không thể hoàn tác.')) return;
+    try {
+      await adminService.deleteCourseCover(courseId);
+      await fetchCourses();
+      await loadCourseDetail(courseId);
+      alert('Xóa ảnh bìa thành công');
+    } catch (err) {
+      alert(err.message || 'Không thể xóa ảnh bìa');
+    }
+  };
+
   const uploadCourseVideo = async (courseId, file) => {
     try {
       setUploadingCourseId(courseId);
@@ -318,6 +342,11 @@ const AdminCourses = () => {
                     </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+                    {selectedCourse.videoKey && (
+                      <button onClick={() => deleteCourseVideo(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                        Xóa video
+                      </button>
+                    )}
                     <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'}`}>
                       {uploadingCourseId === selectedCourse._id ? `Đang tải ${uploadProgress}%` : 'Tải video'}
                       <input
@@ -330,8 +359,13 @@ const AdminCourses = () => {
                           e.target.value = '';
                         }}
                         className="hidden"
-                      />
-                    </label>
+                       />
+                     </label>
+                     {selectedCourse.coverImageKey && (
+                       <button onClick={() => deleteCourseCover(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                         Xóa ảnh bìa
+                       </button>
+                     )}
                      <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
                        {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
                        <input

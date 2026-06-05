@@ -213,6 +213,34 @@ const courseService = {
     const playbackUrl = await storageService.getSignedPlaybackUrl(course.videoKey, PRESIGNED_TTL_SECONDS);
     return { playbackUrl, expiresIn: PRESIGNED_TTL_SECONDS };
   },
+
+  deleteCourseVideo: async (courseId) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (course.videoKey) {
+      await storageService.deleteObject(course.videoKey);
+    }
+    course.videoKey = null;
+    course.videoUrl = null;
+    course.videoMimeType = null;
+    course.videoSize = 0;
+    await course.save();
+    return course;
+  },
+
+  deleteCourseCover: async (courseId) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (course.coverImageKey) {
+      await storageService.deleteObject(course.coverImageKey);
+    }
+    course.coverImageKey = null;
+    course.coverImageMimeType = null;
+    course.coverImageSize = 0;
+    course.thumbnail = null;
+    await course.save();
+    return course;
+  },
 };
 
 module.exports = courseService;

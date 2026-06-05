@@ -20,6 +20,8 @@ const adminService = {
   initCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/init`, data),
   completeCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/complete`, data),
   abortCourseCoverUpload: (data) => api.post('/admin/courses/cover/abort', data),
+  deleteCourseVideo: (id) => api.delete(`/admin/courses/${id}/video`),
+  deleteCourseCover: (id) => api.delete(`/admin/courses/${id}/cover`),
 
   // Quizzes
   getAllQuizzes: (params) => api.get('/admin/quizzes', { params }),

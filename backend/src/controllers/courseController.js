@@ -116,6 +116,24 @@ const courseController = {
       next(error);
     }
   },
+
+  deleteCourseVideo: async (req, res, next) => {
+    try {
+      await courseService.deleteCourseVideo(req.params.id);
+      sendResponse(res, 200, true, 'Video deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteCourseCover: async (req, res, next) => {
+    try {
+      await courseService.deleteCourseCover(req.params.id);
+      sendResponse(res, 200, true, 'Cover deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 module.exports = courseController;

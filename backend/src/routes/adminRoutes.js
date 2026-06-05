@@ -46,9 +46,11 @@ router.post('/courses/:id/video/init', courseController.initCourseVideoUpload);
 router.post('/courses/:id/video/complete', courseController.completeCourseVideoUpload);
 router.post('/courses/video/sign-part', courseController.signCourseVideoPart);
 router.post('/courses/video/abort', courseController.abortCourseVideoUpload);
+router.delete('/courses/:id/video', courseController.deleteCourseVideo);
 router.post('/courses/:id/cover/init', courseController.initCourseCoverUpload);
 router.post('/courses/:id/cover/complete', courseController.completeCourseCoverUpload);
 router.post('/courses/cover/abort', courseController.abortCourseCoverUpload);
+router.delete('/courses/:id/cover', courseController.deleteCourseCover);
 
 // Chapter management
 router.post('/chapters', courseController.createChapter);
