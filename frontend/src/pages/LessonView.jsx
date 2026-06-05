@@ -93,9 +93,10 @@ const LessonView = () => {
               {course.duration > 0 && <p className="text-sm text-gray-500 mb-4">⏱ Thời lượng: {course.duration} phút</p>}
 
               {course.content ? (
-                <div className="mt-6 prose prose-sm max-w-none">
-                  <p className="text-gray-700 whitespace-pre-wrap leading-7">{course.content}</p>
-                </div>
+                <div 
+                  className="mt-6 prose prose-sm max-w-none text-gray-700 leading-7"
+                  dangerouslySetInnerHTML={{ __html: course.content }}
+                />
               ) : (
                 <p className="text-gray-500 mt-6">Khóa học chưa có nội dung lý thuyết.</p>
               )}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import adminService from '../services/adminService';
 import courseService from '../services/courseService';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { DYNASTIES } from '../utils/constants';
 import AdminLayout from '../components/Layout/AdminLayout';
 import Loading from '../components/Common/Loading';
@@ -402,7 +404,10 @@ const AdminCourses = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <h3 className="font-semibold text-gray-900 mb-3">Phần lý thuyết</h3>
                 {selectedCourse.content ? (
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap leading-6">{selectedCourse.content}</p>
+                  <div 
+                    className="text-sm text-gray-700 leading-6 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: selectedCourse.content }}
+                  />
                 ) : (
                   <p className="text-sm text-gray-400">Chưa có nội dung lý thuyết</p>
                 )}
@@ -459,9 +464,24 @@ const AdminCourses = () => {
             <input type="number" min={0} value={currentCourse.duration} onChange={(e) => setCurrentCourse({ ...currentCourse, duration: Number(e.target.value) })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
           </div>
 
-          <div>
+          <div className="pb-12">
             <label className="block text-sm font-medium mb-1">Phần lý thuyết</label>
-            <textarea value={currentCourse.content} onChange={(e) => setCurrentCourse({ ...currentCourse, content: e.target.value })} rows={8} placeholder="Nhập nội dung lý thuyết của khóa học..." className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            <ReactQuill
+              theme="snow"
+              value={currentCourse.content}
+              onChange={(value) => setCurrentCourse({ ...currentCourse, content: value })}
+              className="h-64 mb-10"
+              modules={{
+                toolbar: [
+                  [{ 'header': [1, 2, 3, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'color': [] }, { 'background': [] }],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  [{ 'align': [] }],
+                  ['clean']
+                ]
+              }}
+            />
           </div>
 
           <div className="flex items-center gap-2">
