@@ -176,13 +176,13 @@ const Shop = () => {
             <div className="pt-4 sm:pt-6">
               <button 
               onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
-                className="px-6 sm:px-8 py-3 sm:py-4 text-xs font-bold tracking-wider text-white hover:opacity-90 transition-opacity"
+                className="px-20 sm:px-20 py-3 sm:py-4 text-s font-bold tracking-wider text-[#601407] hover:opacity-90 transition-opacity"
                 style={{ 
-                  backgroundColor: '#4b0003',
-                  borderRadius: '2px',
+                  backgroundColor: '#FFD36E',
+                  borderRadius: '5px',
                   fontFamily: 'Hanken Grotesk, sans-serif',
                   letterSpacing: '1.2px',
-                  lineHeight: '16px'
+                  lineHeight: '16px',
                 }}
               >
                 MUA NGAY

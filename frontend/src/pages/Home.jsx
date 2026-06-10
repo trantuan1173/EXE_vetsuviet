@@ -6,20 +6,20 @@ import courseService from '../services/courseService';
 const featureCards = [
   {
     title: 'Học sử thú vị',
-    description: 'Bài học sinh động, dễ hiểu theo từng giai đoạn lịch sử.',
+    description: 'Khám phá lịch sử Việt Nam qua những câu chuyện, nhân vật và sự kiện được kể lại một cách sinh động, dễ hiểu.',
     cta: 'Khám phá ngay',
     icon: '📚',
   },
   {
     title: 'Khám phá thêm',
-    description: 'Được nhìn, chiêm ngưỡng những điều thú vị',
+    description: 'Chiêm ngưỡng hình ảnh, hiện vật và những dấu ấn lịch sử giúp bạn hiểu sâu hơn về quá khứ dân tộc.',
     cta: '',
     icon: '🔍',
   },
   {
     title: 'Tham gia cộng đồng',
     description:
-      'Tham gia cộng đồng Vết Sử Việt để thảo luận, chia sẻ kiến thức và kết nối với những người cùng đam mê lịch sử dân tộc.',
+      'Kết nối với những người yêu lịch sử, cùng chia sẻ kiến thức, thảo luận và lan tỏa giá trị văn hóa dân tộc.',
     cta: 'Tham gia ngay',
     icon: '🤝',
   },
@@ -78,19 +78,51 @@ const Home = () => {
       </section>
 
       <section className="mx-auto max-w-[1280px] px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-10 relative z-20">
-        {featureCards.map((item) => (
-          <div
-            key={item.title}
-            className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)]"
-          >
-            <div className="mx-auto mb-4 sm:mb-6 h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-[#6F0D0D]/10 flex items-center justify-center text-2xl sm:text-3xl">
-              {item.icon}
+        {featureCards.map((item) => {
+          const cardContent = (
+            <>
+              <div className="mx-auto mb-4 sm:mb-6 h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-[#6F0D0D]/10 flex items-center justify-center text-2xl sm:text-3xl">
+                {item.icon}
+              </div>
+              <h3 className="text-lg sm:text-[20px] leading-6 sm:leading-7 font-bold mb-2 sm:mb-3">{item.title}</h3>
+              <p className="text-[#4B5563] text-sm sm:text-[16px] leading-5 sm:leading-6 mb-3 sm:mb-4">{item.description}</p>
+              {item.cta && <span className="text-[#6F0D0D] font-bold text-[16px]">{item.cta}</span>}
+            </>
+          );
+
+          if (item.title === 'Học sử thú vị') {
+            return (
+              <Link
+                key={item.title}
+                to="/courses"
+                className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
+              >
+                {cardContent}
+              </Link>
+            );
+          }
+
+          if (item.title === 'Tham gia cộng đồng') {
+            return (
+              <div
+                key={item.title}
+                className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
+              >
+                {cardContent}
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={item.title}
+              className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)]"
+            >
+              {cardContent}
             </div>
-            <h3 className="text-lg sm:text-[20px] leading-6 sm:leading-7 font-bold mb-2 sm:mb-3">{item.title}</h3>
-            <p className="text-[#4B5563] text-sm sm:text-[16px] leading-5 sm:leading-6 mb-3 sm:mb-4">{item.description}</p>
-            {item.cta && <span className="text-[#6F0D0D] font-bold text-[16px]">{item.cta}</span>}
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section className="mx-auto max-w-[1280px] px-4 sm:px-6 py-12 sm:py-16">
@@ -154,7 +186,7 @@ const Home = () => {
         )}
       </section>
 
-      <section className="mx-auto max-w-[1232px] px-4 sm:px-6">
+      {/* <section className="mx-auto max-w-[1232px] px-4 sm:px-6">
         <div className="rounded-xl sm:rounded-2xl bg-[#6F0D0D] px-6 sm:px-8 md:px-12 py-8 sm:py-10 md:py-12 text-white flex flex-col lg:flex-row lg:items-center gap-6 sm:gap-8">
           <div className="flex-1">
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-3 sm:mb-4">
@@ -167,7 +199,7 @@ const Home = () => {
           </div>
           <button className="bg-[#FFD36E] text-[#6F0D0D] font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-base hover:opacity-90 transition-opacity w-full lg:w-auto">Tham gia ngay</button>
         </div>
-      </section>
+      </section> */}
 
       <section id="community" className="mx-auto max-w-[1280px] px-4 sm:px-6 py-12 sm:py-16 lg:py-20 grid grid-cols-1 lg:grid-cols-[390px_1fr] gap-8 sm:gap-12">
         <div>
@@ -186,7 +218,9 @@ const Home = () => {
             Tham gia cộng đồng Vết Sử Việt để thảo luận, chia sẻ kiến thức và kết nối với những người cùng đam mê lịch
             sử dân tộc.
           </p>
-          <button className="border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-base hover:bg-[#6F0D0D] hover:text-white transition-colors w-full lg:w-auto">
+          <button
+          onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
+           className="border-2 border-[#6F0D0D] text-[#6F0D0D] font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-base hover:bg-[#6F0D0D] hover:text-white transition-colors w-full lg:w-auto">
             Tham gia cộng đồng
           </button>
         </div>
