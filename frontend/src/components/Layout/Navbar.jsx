@@ -146,7 +146,7 @@ const Navbar = () => {
                 <Link
                   key={item.label}
                   to={item.to}
-                  className={`relative pb-1 font-['Hepta_Slab'] text-[15px] font-bold tracking-[-0.02em] transition-colors ${
+                  className={`relative pb-1 font-['Montserrat'] text-[15px] font-bold tracking-[-0.02em] transition-colors ${
                     active ? 'text-[#FFD36E]' : 'text-white hover:text-[#FFD36E]'
                   }`}
                 >
@@ -346,13 +346,13 @@ const Navbar = () => {
               <div className="hidden sm:flex items-center gap-2 sm:gap-3">
                 <Link
                   to="/login"
-                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] border border-[#FFD36E] flex items-center justify-center text-white font-['Hepta_Slab'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:bg-white/10"
+                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] border border-[#FFD36E] flex items-center justify-center text-white font-['Montserrat'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:bg-white/10"
                 >
                   Đăng nhập
                 </Link>
                 <Link
                   to="/register"
-                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] bg-[#FFD36E] flex items-center justify-center text-[#601407] font-['Hepta_Slab'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:opacity-95"
+                  className="w-20 sm:w-[124px] h-[34px] sm:h-[38px] rounded-[7px] bg-[#FFD36E] flex items-center justify-center text-[#601407] font-['Montserrat'] text-sm sm:text-[15px] font-bold tracking-[-0.02em] hover:opacity-95"
                 >
                   Đăng ký
                 </Link>
@@ -431,7 +431,7 @@ const Navbar = () => {
                       key={item.label}
                       to={item.to}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`block px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold transition-colors ${
+                      className={`block px-4 py-3 rounded-lg font-['Montserrat'] font-bold transition-colors ${
                         active
                           ? 'bg-[#FFD36E] text-[#601407]'
                           : 'text-white hover:bg-white/10'
@@ -470,14 +470,14 @@ const Navbar = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center bg-[#FFD36E] text-[#601407] px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold hover:opacity-95"
+                    className="block w-full text-center bg-[#FFD36E] text-[#601407] px-4 py-3 rounded-lg font-['Montserrat'] font-bold hover:opacity-95"
                   >
                     Đăng nhập
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center border-2 border-[#FFD36E] text-white px-4 py-3 rounded-lg font-['Hepta_Slab'] font-bold hover:bg-white/10"
+                    className="block w-full text-center border-2 border-[#FFD36E] text-white px-4 py-3 rounded-lg font-['Montserrat'] font-bold hover:bg-white/10"
                   >
                     Đăng ký
                   </Link>
