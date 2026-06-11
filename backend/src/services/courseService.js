@@ -70,7 +70,7 @@ const courseService = {
     return enrollment;
   },
 
-  getUserEnrollments: async (userId) => Enrollment.find({ userId }).populate('courseId', 'title thumbnail dynasty difficulty').sort({ enrolledAt: -1 }),
+  getUserEnrollments: async (userId) => Enrollment.find({ userId }).populate('courseId', 'title thumbnail dynasty difficulty price').sort({ createdAt: -1 }),
 
   completeCourse: async (userId, courseId) => {
     const enrollment = await Enrollment.findOne({ userId, courseId });
@@ -207,9 +207,15 @@ const courseService = {
   abortCourseVideoUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
   abortCourseCoverUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
 
-  getCoursePlaybackUrl: async (courseId) => {
+  getCoursePlaybackUrl: async (courseId, userId) => {
     const course = await Course.findById(courseId);
     if (!course || !course.videoKey) throw new Error('Video not found');
+
+    const enrollment = await Enrollment.findOne({ userId, courseId });
+    if (!enrollment || !enrollment.isPaid) {
+      throw new Error('Vui lòng mua khoá học để xem video');
+    }
+
     const playbackUrl = await storageService.getSignedPlaybackUrl(course.videoKey, PRESIGNED_TTL_SECONDS);
     return { playbackUrl, expiresIn: PRESIGNED_TTL_SECONDS };
   },

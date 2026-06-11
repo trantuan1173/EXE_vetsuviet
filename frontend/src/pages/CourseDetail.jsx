@@ -57,9 +57,10 @@ const CourseDetail = () => {
 
     setEnrolling(true);
     try {
-      await courseService.enrollCourse(id);
-      success('Ghi danh khóa học thành công!');
-      navigate(`/courses/${id}/learn`);
+      // await courseService.enrollCourse(id);
+      // success('Ghi danh khóa học thành công!');
+      // navigate(`/courses/${id}/learn`);
+      window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')
     } catch (err) {
       if (err.response?.data?.message === 'Already enrolled in this course') {
         navigate(`/courses/${id}/learn`);
@@ -160,9 +161,13 @@ const CourseDetail = () => {
                 </h1>
 
                 {/* Description */}
-                <p className="text-[#6F0D0D] text-base leading-6 mb-8 max-w-[448px]">
+                <p className="text-[#6F0D0D] text-base leading-6 mb-4 max-w-[448px]">
                   {course.description || 'Description'}
                 </p>
+
+                <div className="text-[#6F0D0D] text-3xl font-bold mb-8">
+                  {(course.price || 0).toLocaleString('vi-VN')}đ
+                </div>
 
                 {/* Buttons */}
                 <div className="flex gap-4 mb-6">
@@ -177,7 +182,7 @@ const CourseDetail = () => {
                     disabled={enrolling}
                     className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
                   >
-                    {enrolling ? 'Đang xử lý...' : 'Vào Học'}
+                    {enrolling ? 'Đang xử lý...' : 'Mua ngay'}
                   </button>
                 </div>
 
@@ -305,7 +310,7 @@ const CourseDetail = () => {
 
                     {/* Buy Button */}
                     <button
-                      onClick={() => navigate(`/shop/products/${product._id}`)}
+                      onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
                       className="w-full bg-[#D8A85D] text-white font-bold text-base px-6 py-3 rounded-lg shadow-[0_2px_4px_-2px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-lg hover:bg-[#c99a4d] transition-all"
                     >
                       Mua ngay

@@ -64,6 +64,11 @@ const courseSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    price: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     enrolledCount: {
       type: Number,
       default: 0,

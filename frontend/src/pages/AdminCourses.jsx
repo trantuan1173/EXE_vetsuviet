@@ -16,6 +16,7 @@ const EMPTY_COURSE = {
   content: '',
   videoUrl: '',
   duration: 0,
+  price: 0,
   isPublished: false,
 };
 
@@ -62,6 +63,7 @@ const AdminCourses = () => {
     videoUrl: course?.videoUrl || '',
     content: course?.content || '',
     duration: course?.duration || 0,
+    price: course?.price || 0,
   });
 
   const fetchCourses = async () => {
@@ -302,6 +304,9 @@ const AdminCourses = () => {
                     <div className="min-w-0">
                       <p className="font-semibold text-gray-900 truncate">{course.title}</p>
                       <p className="text-xs text-gray-500 mt-1">{course.dynasty} &middot; {course.difficulty}</p>
+                      <p className="text-xs font-semibold text-primary-600 mt-1">
+                        {(course.price || 0).toLocaleString('vi-VN')}đ
+                      </p>
                     </div>
                     <span className={`px-2 py-0.5 rounded text-xs flex-shrink-0 ${course.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                       {course.isPublished ? 'Published' : 'Draft'}
@@ -339,6 +344,9 @@ const AdminCourses = () => {
                     <h2 className="text-xl font-bold text-gray-900">{selectedCourse.title}</h2>
                     <p className="text-sm text-gray-500 mt-1">
                       {selectedCourse.dynasty} &middot; {selectedCourse.difficulty} &middot; {selectedCourse.enrolledCount || 0} học viên
+                    </p>
+                    <p className="text-sm font-semibold text-primary-600 mt-1">
+                      Giá: {(selectedCourse.price || 0).toLocaleString('vi-VN')}đ
                     </p>
                     {selectedCourse.description && <p className="text-sm text-gray-600 mt-2">{selectedCourse.description}</p>}
                     </div>
@@ -459,9 +467,15 @@ const AdminCourses = () => {
             <p>Ảnh bìa tải lên bằng nút <span className="font-medium">Tải ảnh bìa</span> và dùng signed URL từ MinIO.</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Thời lượng (phút)</label>
-            <input type="number" min={0} value={currentCourse.duration} onChange={(e) => setCurrentCourse({ ...currentCourse, duration: Number(e.target.value) })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Thời lượng (phút)</label>
+              <input type="number" min={0} value={currentCourse.duration} onChange={(e) => setCurrentCourse({ ...currentCourse, duration: Number(e.target.value) })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Giá khóa học (VNĐ)</label>
+              <input type="number" min={0} value={currentCourse.price} onChange={(e) => setCurrentCourse({ ...currentCourse, price: Number(e.target.value) })} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            </div>
           </div>
 
           <div className="pb-12">

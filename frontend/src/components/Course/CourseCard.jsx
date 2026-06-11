@@ -37,6 +37,9 @@ const CourseCard = ({ course }) => {
           <p className="text-sm text-gray-600 line-clamp-2 mb-3">
             {course.description}
           </p>
+          <p className="text-lg font-bold text-primary-600">
+            {(course.price || 0).toLocaleString('vi-VN')}đ
+          </p>
         </Card.Body>
         <Card.Footer>
           <div className="flex items-center justify-between text-sm">

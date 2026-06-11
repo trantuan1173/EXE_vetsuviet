@@ -33,7 +33,7 @@ const courseController = {
 
   getCourseVideoPlayback: async (req, res, next) => {
     try {
-      const result = await courseService.getCoursePlaybackUrl(req.params.id);
+      const result = await courseService.getCoursePlaybackUrl(req.params.id, req.user.id);
       sendResponse(res, 200, true, 'Playback URL generated', result);
     } catch (error) {
       next(error);
