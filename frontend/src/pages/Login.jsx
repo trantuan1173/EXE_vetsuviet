@@ -57,7 +57,7 @@ const Login = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-heading font-bold text-gray-900">
-              🎌 Đăng nhập
+              🇻🇳 Đăng nhập
             </h1>
             <p className="text-gray-500 mt-2">Chào mừng trở lại Vết Sử Việt</p>
           </div>
