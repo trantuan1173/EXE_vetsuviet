@@ -56,7 +56,7 @@ const ProductCard = ({ product }) => {
               style={{ 
                 backgroundColor: badge.color,
                 borderRadius: '12px',
-                fontFamily: 'Hanken Grotesk, sans-serif',
+                fontFamily: 'Montserrat, sans-serif',
                 letterSpacing: '1px',
                 lineHeight: '15px'
               }}
@@ -74,7 +74,7 @@ const ProductCard = ({ product }) => {
           <span 
             className="text-xs font-bold tracking-wider inline-block"
             style={{ 
-              fontFamily: 'Hanken Grotesk, sans-serif',
+              fontFamily: 'Montserrat, sans-serif',
               color: '#7d5713',
               letterSpacing: '1.2px',
               lineHeight: '16px'
@@ -88,7 +88,7 @@ const ProductCard = ({ product }) => {
         <h3 
           className="font-medium mb-2"
           style={{ 
-            fontFamily: 'EB Garamond, serif',
+            fontFamily: 'Montserrat, sans-serif',
             fontSize: '32px',
             lineHeight: '40px',
             color: '#1d1c17'
@@ -101,7 +101,7 @@ const ProductCard = ({ product }) => {
         <p 
           className="mb-6 line-clamp-3"
           style={{ 
-            fontFamily: 'Hanken Grotesk, sans-serif',
+            fontFamily: 'Montserrat, sans-serif',
             fontSize: '16px',
             lineHeight: '24px',
             color: '#57413f',
@@ -126,7 +126,7 @@ const ProductCard = ({ product }) => {
             <span 
               className="font-bold"
               style={{ 
-                fontFamily: 'Hanken Grotesk, sans-serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: '16px',
                 lineHeight: '24px',
                 color: '#7d5713'
@@ -145,7 +145,7 @@ const ProductCard = ({ product }) => {
             style={{ 
               backgroundColor: '#6f0d0d',
               borderRadius: '2px',
-              fontFamily: 'Hanken Grotesk, sans-serif',
+              fontFamily: 'Montserrat, sans-serif',
               letterSpacing: '1.2px',
               lineHeight: '16px'
             }}

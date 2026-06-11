@@ -14,16 +14,16 @@ const Footer = () => {
 
         {/* Navigation Links */}
         <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          <Link to="/about" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Manrope, sans-serif' }}>
+          <Link to="/about" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Về chúng tôi
           </Link>
-          <Link to="/privacy" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Manrope, sans-serif' }}>
+          <Link to="/privacy" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Chính sách bảo mật
           </Link>
-          <Link to="/terms" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Manrope, sans-serif' }}>
+          <Link to="/terms" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Điều khoản sử dụng
           </Link>
-          <Link to="/contact" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Manrope, sans-serif' }}>
+          <Link to="/contact" className="text-white text-base font-normal underline hover:text-white/80 transition-colors" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Liên hệ
           </Link>
         </nav>
@@ -51,7 +51,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <p className="text-white text-xs font-medium text-center" style={{ fontFamily: 'Manrope, sans-serif' }}>
+        <p className="text-white text-xs font-medium text-center" style={{ fontFamily: 'Montserrat, sans-serif' }}>
           © 2026 Vết Sử Việt. Lan tỏa sử ta
         </p>
       </div>

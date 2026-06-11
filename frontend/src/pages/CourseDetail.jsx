@@ -155,7 +155,7 @@ const CourseDetail = () => {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-[#6F0D0D] text-5xl font-semibold leading-[52.8px] tracking-[-0.02em] mb-6" style={{ fontFamily: 'Hepta Slab, serif' }}>
+                <h1 className="text-[#6F0D0D] text-5xl font-semibold leading-[52.8px] tracking-[-0.02em] mb-6" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   {course.title.toUpperCase()}
                 </h1>
 
@@ -212,7 +212,7 @@ const CourseDetail = () => {
                 <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
                   <path d="M10 0L12.245 6.755L19 9L12.245 11.245L10 18L7.755 11.245L1 9L7.755 6.755L10 0Z" fill="#4B0003" />
                 </svg>
-                <h2 className="text-[#281713] text-2xl font-medium" style={{ fontFamily: 'EB Garamond, serif' }}>
+                <h2 className="text-[#281713] text-2xl font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   BẢNG XẾP HẠNG
                 </h2>
               </div>

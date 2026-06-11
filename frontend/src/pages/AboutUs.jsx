@@ -18,7 +18,7 @@ const AboutUs = () => {
                     {/* Subtitle */}
                     <p
                         className="text-xs font-bold tracking-[0.3em] uppercase mb-6"
-                        style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#F0BE71' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", color: '#F0BE71' }}
                     >
                         HÀNH TRÌNH TÌM VỀ CỘI NGUỒN
                     </p>
@@ -26,7 +26,7 @@ const AboutUs = () => {
                     {/* Heading */}
                     <h1
                         className="text-white leading-[60px] mb-4"
-                        style={{ fontFamily: "'EB Garamond', serif", fontWeight: 600, fontSize: '60px', letterSpacing: '-0.02em' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: '60px', letterSpacing: '-0.02em' }}
                     >
                         Lịch sử không nên chỉ được học.
                         <br />
@@ -38,7 +38,7 @@ const AboutUs = () => {
                     {/* Description */}
                     <p
                         className="max-w-[672px] mt-2 text-center leading-[29px] opacity-90"
-                        style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '18px', color: '#ECE8E0' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', color: '#ECE8E0' }}
                     >
                         Chúng tôi không chỉ kể lại những mốc thời gian khô khan. Vết Sử Việt kiến tạo một
                         hệ sinh thái học thuật đầy cảm xúc, nơi kiến thức hệ thống hòa quyện cùng trải
@@ -51,7 +51,7 @@ const AboutUs = () => {
                             to="/courses"
                             className="inline-flex items-center gap-2 px-8 py-4 rounded text-white font-bold text-base"
                             style={{
-                                fontFamily: "'Hanken Grotesk', sans-serif",
+                                fontFamily: "'Montserrat', sans-serif",
                                 backgroundColor: '#6F0D0D',
                                 boxShadow: '0px 8px 10px -6px rgba(75,0,3,0.2), 0px 20px 25px -5px rgba(75,0,3,0.2)',
                             }}
@@ -71,7 +71,7 @@ const AboutUs = () => {
                 <div className="text-center mb-16">
                     <h2
                         className="mb-4"
-                        style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 500, fontSize: '48px', lineHeight: '40px', color: '#4B0003' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 500, fontSize: '48px', lineHeight: '40px', color: '#4B0003' }}
                     >
                         Ý nghĩa cái tên "Vết Sử Việt"
                     </h2>
@@ -84,7 +84,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F8F3EB] border border-[#DEBFBC] p-10 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[73px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Vết
                         </span>
@@ -99,13 +99,13 @@ const AboutUs = () => {
                             </div>
                             <h3
                                 className="text-xl font-bold mb-3"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}
                             >
                                 Dấu vết thời gian
                             </h3>
                             <p
                                 className="text-sm leading-relaxed"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#57413F' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#57413F' }}
                             >
                                 Là "vết hằn" trong tâm trí. Chúng tôi
                                 tập trung vào khả năng ghi nhớ lâu
@@ -121,7 +121,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F2EDE5] border border-[#DEBFBC] p-10 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[145px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Sử
                         </span>
@@ -136,13 +136,13 @@ const AboutUs = () => {
                             </div>
                             <h3
                                 className="text-xl font-bold mb-3"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}
                             >
                                 Dòng chảy lịch sử
                             </h3>
                             <p
                                 className="text-sm leading-relaxed"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#57413F' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#57413F' }}
                             >
                                 Là tính hệ thống và logic. Kiến thức
                                 lịch sử tại đây được chuẩn hóa, xâu
@@ -158,7 +158,7 @@ const AboutUs = () => {
                     <div className="relative bg-[#F8F3EB] border border-[#DEBFBC] p-10 pb-16 overflow-hidden">
                         <span
                             className="absolute top-[-39px] left-[1px] select-none pointer-events-none"
-                            style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontSize: '165px', lineHeight: '270px', color: 'rgba(75,0,3,0.05)' }}
                         >
                             Việt
                         </span>
@@ -171,13 +171,13 @@ const AboutUs = () => {
                             </div>
                             <h3
                                 className="text-xl font-bold mb-3"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}
                             >
                                 Bản sắc Việt Nam
                             </h3>
                             <p
                                 className="text-sm leading-relaxed"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#57413F' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", color: '#57413F' }}
                             >
                                 Là bản sắc dân tộc. Chúng tôi đặt
                                 người Việt trẻ vào trung tâm, khơi dậy
@@ -206,7 +206,7 @@ const AboutUs = () => {
                                 className="absolute bottom-6 right-[-20px] bg-[#FEF9F1] border border-[#DEBFBC] p-8 rounded hidden lg:block"
                                 style={{ maxWidth: '320px' }}
                             >
-                                <p className="text-sm font-medium" style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}>
+                                <p className="text-sm font-medium" style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}>
                                     "Lịch sử không chỉ nằm trong sách vở, mà sống trong cách chúng ta kể lại và truyền cảm hứng."
                                 </p>
                             </div>
@@ -217,13 +217,13 @@ const AboutUs = () => {
                     <div className="flex-1">
                         <p
                             className="text-base tracking-[0.2em] mb-4"
-                            style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontWeight: 400, color: '#6F0D0D' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, color: '#6F0D0D' }}
                         >
                             TRIẾT LÝ GIÁO DỤC
                         </p>
                         <h2
                             className="mb-8"
-                            style={{ fontFamily: "'EB Garamond', serif", fontWeight: 500, fontSize: '48px', lineHeight: '48px', color: '#4B0003' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 500, fontSize: '48px', lineHeight: '48px', color: '#4B0003' }}
                         >
                             Hành trình từ tiếp nhận
                             <br />
@@ -256,20 +256,20 @@ const AboutUs = () => {
                                 <div key={item.step} className="flex gap-6">
                                     <div
                                         className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6F0D0D] text-white flex items-center justify-center font-bold text-sm"
-                                        style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}
+                                        style={{ fontFamily: "'Montserrat', sans-serif" }}
                                     >
                                         {item.step}
                                     </div>
                                     <div>
                                         <h4
                                             className="text-lg font-bold mb-1"
-                                            style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}
+                                            style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}
                                         >
                                             {item.title}
                                         </h4>
                                         <p
                                             className="text-sm leading-relaxed"
-                                            style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#57413F' }}
+                                            style={{ fontFamily: "'Montserrat', sans-serif", color: '#57413F' }}
                                         >
                                             {item.desc}
                                         </p>
@@ -297,14 +297,14 @@ const AboutUs = () => {
                 <div className="relative z-10 max-w-[1200px] mx-auto px-6 text-center flex flex-col items-center gap-8">
                     <h2
                         className="text-white"
-                        style={{ fontFamily: "'EB Garamond', serif", fontWeight: 400, fontStyle: 'italic', fontSize: '72px', lineHeight: '72px' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, fontStyle: 'italic', fontSize: '72px', lineHeight: '72px' }}
                     >
                         Biến lịch sử thành trải nghiệm đáng nhớ.
                     </h2>
                     <div className="w-32 h-1" style={{ backgroundColor: '#F0BE71' }} />
                     <p
                         className="max-w-[768px] opacity-80"
-                        style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '24px', lineHeight: '32px', color: '#FFDDAF' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '24px', lineHeight: '32px', color: '#FFDDAF' }}
                     >
                         Sứ mệnh của chúng tôi là hồi sinh dòng máu Lạc Hồng trong từng nhịp
                         đập của thế hệ trẻ thông qua ngôn ngữ của nghệ thuật và công nghệ
@@ -321,12 +321,12 @@ const AboutUs = () => {
                         <div>
                             <p
                                 className="text-base tracking-[0.2em] mb-4"
-                                style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontWeight: 400, color: '#6F0D0D' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 400, color: '#6F0D0D' }}
                             >
                                 GIÁ TRỊ CỐT LÕI
                             </p>
                             <h2
-                                style={{ fontFamily: "'Hepta Slab', serif", fontWeight: 500, fontSize: '48px', lineHeight: '48px', color: '#4B0003' }}
+                                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 500, fontSize: '48px', lineHeight: '48px', color: '#4B0003' }}
                             >
                                 Những giá trị định danh
                                 <br />
@@ -336,7 +336,7 @@ const AboutUs = () => {
                         <Link
                             to="/about"
                             className="flex items-center gap-2 font-bold text-base"
-                            style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#4B0003' }}
+                            style={{ fontFamily: "'Montserrat', sans-serif", color: '#4B0003' }}
                         >
                             Khám phá văn hóa công ty
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -393,13 +393,13 @@ const AboutUs = () => {
                                 <div>{card.icon}</div>
                                 <h4
                                     className="text-xl font-bold pt-2"
-                                    style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#1D1C17' }}
+                                    style={{ fontFamily: "'Montserrat', sans-serif", color: '#1D1C17' }}
                                 >
                                     {card.title}
                                 </h4>
                                 <p
                                     className="text-sm leading-[22.75px]"
-                                    style={{ fontFamily: "'Hanken Grotesk', sans-serif", color: '#57413F' }}
+                                    style={{ fontFamily: "'Montserrat', sans-serif", color: '#57413F' }}
                                 >
                                     {card.desc}
                                 </p>
@@ -429,7 +429,7 @@ const AboutUs = () => {
                     {/* Heading */}
                     <h2
                         className="pt-6"
-                        style={{ fontFamily: "'EB Garamond', serif", fontWeight: 500, fontSize: '60px', lineHeight: '60px', color: '#4B0003' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 500, fontSize: '60px', lineHeight: '60px', color: '#4B0003' }}
                     >
                         Không chỉ truyền đạt kiến thức.
                         <br />
@@ -439,7 +439,7 @@ const AboutUs = () => {
                     {/* Description */}
                     <p
                         className="max-w-[672px] italic"
-                        style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: '16px', lineHeight: '24px', color: '#57413F' }}
+                        style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', lineHeight: '24px', color: '#57413F' }}
                     >
                         Cùng Vết Sử Việt viết tiếp những trang sử hào hùng bằng niềm tự hào và tri thức của thế hệ
                         hôm nay.
@@ -451,7 +451,7 @@ const AboutUs = () => {
                             to="/register"
                             className="px-10 py-[17.5px] rounded-xl text-white font-bold text-base"
                             style={{
-                                fontFamily: "'Hanken Grotesk', sans-serif",
+                                fontFamily: "'Montserrat', sans-serif",
                                 backgroundColor: '#4B0003',
                                 boxShadow: '0px 4px 6px -4px rgba(0,0,0,0.1), 0px 10px 15px -3px rgba(0,0,0,0.1)',
                             }}
@@ -462,7 +462,7 @@ const AboutUs = () => {
                             to="/contact"
                             className="px-10 py-4 rounded-xl font-bold text-base border-2"
                             style={{
-                                fontFamily: "'Hanken Grotesk', sans-serif",
+                                fontFamily: "'Montserrat', sans-serif",
                                 color: '#4B0003',
                                 borderColor: '#4B0003',
                             }}

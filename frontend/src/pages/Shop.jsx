@@ -132,7 +132,7 @@ const Shop = () => {
               <span 
                 className="text-xs font-bold tracking-wider"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#ffddaf',
                   letterSpacing: '2.4px',
                   lineHeight: '16px'
@@ -146,7 +146,7 @@ const Shop = () => {
             <h1 
               className="font-semibold mb-6 sm:mb-8 lg:mb-10"
               style={{ 
-                fontFamily: 'Hepta Slab, serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: 'clamp(28px, 5vw, 48px)',
                 lineHeight: '1.25',
                 color: '#ffffff',
@@ -161,7 +161,7 @@ const Shop = () => {
             <p 
               className="mb-4 sm:mb-6"
               style={{ 
-                fontFamily: 'Hanken Grotesk, sans-serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: 'clamp(14px, 2.5vw, 18px)',
                 lineHeight: '1.6',
                 color: '#e7e2dae5',
@@ -180,7 +180,7 @@ const Shop = () => {
                 style={{ 
                   backgroundColor: '#FFD36E',
                   borderRadius: '5px',
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   letterSpacing: '1.2px',
                   lineHeight: '16px',
                 }}
@@ -202,7 +202,7 @@ const Shop = () => {
               <h2 
                 className="font-medium mb-2" 
                 style={{ 
-                  fontFamily: 'EB Garamond, serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   fontSize: '32px',
                   lineHeight: '40px',
                   color: '#4b0003'
@@ -213,7 +213,7 @@ const Shop = () => {
               <p 
                 className="text-base"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#57413f'
                 }}
               >
@@ -228,7 +228,7 @@ const Shop = () => {
                 <label 
                   className="block text-xs font-bold tracking-wider mb-2"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#1d1c17',
                     letterSpacing: '1.2px'
                   }}
@@ -244,7 +244,7 @@ const Shop = () => {
                   style={{ 
                     border: '1px solid #e8e1d3',
                     backgroundColor: '#ffffff',
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     fontSize: '16px',
                     color: '#1d1c17'
                   }}
@@ -256,7 +256,7 @@ const Shop = () => {
                 <label 
                   className="block text-xs font-bold tracking-wider mb-2"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#1d1c17',
                     letterSpacing: '1.2px'
                   }}
@@ -270,7 +270,7 @@ const Shop = () => {
                   style={{ 
                     border: '1px solid #e8e1d3',
                     backgroundColor: '#ffffff',
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     fontSize: '16px',
                     color: '#1d1c17'
                   }}
@@ -289,7 +289,7 @@ const Shop = () => {
                 <label 
                   className="block text-xs font-bold tracking-wider mb-2"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#1d1c17',
                     letterSpacing: '1.2px'
                   }}
@@ -303,7 +303,7 @@ const Shop = () => {
                   style={{ 
                     border: '1px solid #e8e1d3',
                     backgroundColor: '#ffffff',
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     fontSize: '16px',
                     color: '#1d1c17'
                   }}
@@ -322,7 +322,7 @@ const Shop = () => {
                 <label 
                   className="block text-xs font-bold tracking-wider mb-2"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#1d1c17',
                     letterSpacing: '1.2px'
                   }}
@@ -336,7 +336,7 @@ const Shop = () => {
                   style={{ 
                     border: '1px solid #e8e1d3',
                     backgroundColor: '#ffffff',
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     fontSize: '16px',
                     color: '#1d1c17'
                   }}
@@ -355,7 +355,7 @@ const Shop = () => {
                 onClick={() => handleFilterChange({ search: '', category: '', dynasty: '', course: '' })}
                 className="w-full text-xs font-bold tracking-wider py-2 hover:opacity-70 transition-opacity"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#4b0003',
                   letterSpacing: '1.2px',
                   border: '1px solid #4b0003',
@@ -382,7 +382,7 @@ const Shop = () => {
               <h3 
                 className="font-bold text-lg mb-2"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#1d1c17',
                   lineHeight: '28px'
                 }}
@@ -393,7 +393,7 @@ const Shop = () => {
               <p 
                 className="text-base mb-4"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#57413f',
                   lineHeight: '24px'
                 }}
@@ -410,7 +410,7 @@ const Shop = () => {
                   className="w-full px-3 py-2 mb-2 rounded"
                   style={{ 
                     border: '1px solid #8b716e',
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     fontSize: '16px'
                   }}
                 />
@@ -418,7 +418,7 @@ const Shop = () => {
                   type="submit"
                   className="flex items-center gap-2 text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#4b0003',
                     letterSpacing: '1.2px'
                   }}
@@ -441,7 +441,7 @@ const Shop = () => {
                 <p 
                   className="text-lg"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#57413f'
                   }}
                 >
@@ -495,7 +495,7 @@ const Shop = () => {
               <span 
                 className="text-xs font-bold tracking-wider"
                 style={{ 
-                  fontFamily: 'Hanken Grotesk, sans-serif',
+                  fontFamily: 'Montserrat, sans-serif',
                   color: '#ffddaf',
                   letterSpacing: '1.2px',
                   lineHeight: '16px'
@@ -507,7 +507,7 @@ const Shop = () => {
             <h2 
               className="font-semibold"
               style={{ 
-                fontFamily: 'EB Garamond, serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: 'clamp(32px, 6vw, 64px)',
                 lineHeight: '1.125',
                 color: '#e7e2da',
@@ -544,7 +544,7 @@ const Shop = () => {
                 <span 
                   className="text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#e7e2da',
                     letterSpacing: '1.2px'
                   }}
@@ -565,7 +565,7 @@ const Shop = () => {
                 <span 
                   className="text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#e7e2da',
                     letterSpacing: '1.2px'
                   }}
@@ -586,7 +586,7 @@ const Shop = () => {
                 <span 
                   className="text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#e7e2da',
                     letterSpacing: '1.2px'
                   }}
@@ -608,7 +608,7 @@ const Shop = () => {
                 <span 
                   className="text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#ffddaf',
                     letterSpacing: '1.2px'
                   }}
@@ -629,7 +629,7 @@ const Shop = () => {
                 <span 
                   className="text-xs font-bold tracking-wider"
                   style={{ 
-                    fontFamily: 'Hanken Grotesk, sans-serif',
+                    fontFamily: 'Montserrat, sans-serif',
                     color: '#e7e2da',
                     letterSpacing: '1.2px'
                   }}
@@ -664,7 +664,7 @@ const Shop = () => {
             <p 
               className="text-center font-semibold italic"
               style={{ 
-                fontFamily: 'EB Garamond, serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: 'clamp(24px, 4vw, 48px)',
                 lineHeight: '1.5',
                 color: '#ffffff',
@@ -690,7 +690,7 @@ const Shop = () => {
             <p 
               className="font-light tracking-wider"
               style={{ 
-                fontFamily: 'Hanken Grotesk, sans-serif',
+                fontFamily: 'Montserrat, sans-serif',
                 fontSize: '18px',
                 lineHeight: '28px',
                 color: '#e7e2dab2',
