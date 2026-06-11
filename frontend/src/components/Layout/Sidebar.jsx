@@ -6,6 +6,7 @@ const menuItems = [
   { path: '/admin/quizzes', label: 'Quiz', icon: '❓' },
   { path: '/admin/products', label: 'Sản phẩm', icon: '🛒' },
   { path: '/admin/orders', label: 'Đơn hàng', icon: '📦' },
+  { path: '/admin/enrollments', label: 'Đăng ký khóa học', icon: '🎓' },
   { path: '/admin/users', label: 'Người dùng', icon: '👥' },
 ];
 

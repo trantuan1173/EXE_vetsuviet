@@ -5,42 +5,35 @@ const enrollmentSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'User ID is required'],
+      required: true,
     },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course',
-      required: [true, 'Course ID is required'],
+      required: true,
     },
-    progress: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
+    isPaid: {
+      type: Boolean,
+      default: false,
     },
-    completedLessons: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lesson',
-      },
-    ],
-    enrolledAt: {
-      type: Date,
-      default: Date.now,
-    },
-    completedAt: {
+    paidAt: {
       type: Date,
       default: null,
     },
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    note: {
+      type: String,
+      default: '',
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Indexes
-enrollmentSchema.index({ userId: 1 });
-enrollmentSchema.index({ courseId: 1 });
+// Each student can only enroll once per course
 enrollmentSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Enrollment', enrollmentSchema);

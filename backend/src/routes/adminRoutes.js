@@ -6,6 +6,7 @@ const courseController = require('../controllers/courseController');
 const quizController = require('../controllers/quizController');
 const productController = require('../controllers/productController');
 const orderController = require('../controllers/orderController');
+const enrollmentController = require('../controllers/enrollmentController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { adminOnly } = require('../middleware/roleMiddleware');
 
@@ -90,5 +91,11 @@ router.delete('/products/:id/image', productController.deleteProductImage);
 // Order management
 router.get('/orders', orderController.getAllOrders);
 router.put('/orders/:id/status', orderController.updateOrderStatus);
+
+// Enrollment management
+router.get('/enrollments', enrollmentController.getAllEnrollments);
+router.post('/enrollments', enrollmentController.createEnrollment);
+router.put('/enrollments/:id/toggle-paid', enrollmentController.togglePaid);
+router.delete('/enrollments/:id', enrollmentController.deleteEnrollment);
 
 module.exports = router;

@@ -27,6 +27,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminProducts from './pages/AdminProducts';
 import AdminOrders from './pages/AdminOrders';
+import AdminEnrollments from './pages/AdminEnrollments';
 import AdminCourses from './pages/AdminCourses';
 import AdminQuizzes from './pages/AdminQuizzes';
 
@@ -132,6 +133,14 @@ function App() {
                 element={
                   <ProtectedRoute requireAdmin>
                     <AdminOrders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/enrollments"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminEnrollments />
                   </ProtectedRoute>
                 }
               />

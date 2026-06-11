@@ -60,6 +60,12 @@ const adminService = {
   // Orders
   getAllOrders: (params) => api.get('/admin/orders', { params }),
   updateOrderStatus: (id, status) => api.put(`/admin/orders/${id}/status`, { status }),
+
+  // Enrollments
+  getAllEnrollments: (params) => api.get('/admin/enrollments', { params }),
+  createEnrollment: (data) => api.post('/admin/enrollments', data),
+  toggleEnrollmentPaid: (id, data) => api.put(`/admin/enrollments/${id}/toggle-paid`, data),
+  deleteEnrollment: (id) => api.delete(`/admin/enrollments/${id}`),
 };
 
 export default adminService;

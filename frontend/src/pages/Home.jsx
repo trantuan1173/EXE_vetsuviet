@@ -70,7 +70,7 @@ const Home = () => {
                 Bắt đầu học ngay
               </Link>
             </div>
-            <p className="mt-4 sm:mt-5 text-[#111827] text-base sm:text-lg md:text-xl">
+            <p className="mt-4 sm:mt-5 text-white text-base sm:text-lg md:text-xl">
               Hơn 1000+ <span className="text-[#FFD36E] font-bold">học viên đã tham gia</span>
             </p>
           </div>
