@@ -14,8 +14,11 @@ const AdminEnrollments = () => {
   const [showModal, setShowModal] = useState(false);
   const [newEnrollment, setNewEnrollment] = useState({ userId: '', courseId: '', isPaid: false, note: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [dropdownLoading, setDropdownLoading] = useState(false);
+  const [studentSearch, setStudentSearch] = useState('');
+  const [courseSearch, setCourseSearch] = useState('');
 
-  // Available users and courses for the dropdown
+  // Available users and courses for searchable selection
   const [users, setUsers] = useState([]);
   const [courses, setCourses] = useState([]);
 
@@ -54,6 +57,7 @@ const AdminEnrollments = () => {
   };
 
   const loadDropdownData = async () => {
+    setDropdownLoading(true);
     try {
       const [usersRes, coursesRes] = await Promise.all([
         adminService.getAllUsers({ limit: 500 }),
@@ -65,14 +69,48 @@ const AdminEnrollments = () => {
       setCourses(Array.isArray(coursesData) ? coursesData : coursesData.courses || []);
     } catch (err) {
       console.error('Failed to load users/courses', err);
+      alert('Không thể tải danh sách học sinh/khóa học');
+    } finally {
+      setDropdownLoading(false);
     }
   };
 
   const handleOpenModal = () => {
-    loadDropdownData();
+    setStudentSearch('');
+    setCourseSearch('');
     setNewEnrollment({ userId: '', courseId: '', isPaid: false, note: '' });
     setShowModal(true);
+    loadDropdownData();
   };
+
+  const normalizeText = (value) => (value || '').toString().toLowerCase().trim();
+
+  const filteredUsers = users
+    .filter((u) => {
+      const keyword = normalizeText(studentSearch);
+      if (!keyword) return true;
+      return (
+        normalizeText(u.fullName).includes(keyword) ||
+        normalizeText(u.email).includes(keyword) ||
+        normalizeText(u.phone).includes(keyword)
+      );
+    })
+    .slice(0, 50);
+
+  const filteredCourses = courses
+    .filter((c) => {
+      const keyword = normalizeText(courseSearch);
+      if (!keyword) return true;
+      return (
+        normalizeText(c.title).includes(keyword) ||
+        normalizeText(c.dynasty).includes(keyword) ||
+        normalizeText(c.difficulty).includes(keyword)
+      );
+    })
+    .slice(0, 50);
+
+  const selectedUser = users.find((u) => u._id === newEnrollment.userId);
+  const selectedCourse = courses.find((c) => c._id === newEnrollment.courseId);
 
   const handleCreateEnrollment = async (e) => {
     e.preventDefault();
@@ -128,8 +166,9 @@ const AdminEnrollments = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <h1 className="text-3xl font-bold">Quản lý đăng ký khóa học</h1>
         <button
+          type="button"
           onClick={handleOpenModal}
-          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -145,12 +184,12 @@ const AdminEnrollments = () => {
           placeholder="Tìm theo tên, email hoặc khóa học..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
         />
         <select
           value={filterPaid}
           onChange={(e) => { setFilterPaid(e.target.value); setPagination((p) => ({ ...p, page: 1 })); }}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="true">Đã thanh toán</option>
@@ -254,42 +293,134 @@ const AdminEnrollments = () => {
 
       {/* Add Enrollment Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Thêm đăng ký khóa học</h2>
-            <form onSubmit={handleCreateEnrollment} className="space-y-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Học sinh *</label>
-                <select
-                  value={newEnrollment.userId}
-                  onChange={(e) => setNewEnrollment({ ...newEnrollment, userId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                  required
-                >
-                  <option value="">-- Chọn học sinh --</option>
-                  {users.map((u) => (
-                    <option key={u._id} value={u._id}>
-                      {u.fullName} ({u.email})
-                    </option>
-                  ))}
-                </select>
+                <h2 className="text-xl font-bold">Thêm đăng ký khóa học</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Admin có thể tìm học sinh và khóa học để ghi danh trực tiếp.
+                </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                aria-label="Đóng"
+              >
+                ×
+              </button>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Khóa học *</label>
-                <select
-                  value={newEnrollment.courseId}
-                  onChange={(e) => setNewEnrollment({ ...newEnrollment, courseId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                  required
-                >
-                  <option value="">-- Chọn khóa học --</option>
-                  {courses.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
+            <form onSubmit={handleCreateEnrollment} className="space-y-4">
+              {dropdownLoading && (
+                <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                  Đang tải danh sách học sinh và khóa học...
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tìm và chọn học sinh *</label>
+                  <input
+                    type="text"
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    placeholder="Nhập tên, email hoặc số điện thoại..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                  />
+
+                  {selectedUser && (
+                    <div className="mt-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm">
+                      <p className="font-medium text-green-800">Đã chọn: {selectedUser.fullName}</p>
+                      <p className="text-green-700">{selectedUser.email}</p>
+                    </div>
+                  )}
+
+                  <div className="mt-2 max-h-56 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
+                    {filteredUsers.length === 0 ? (
+                      <div className="px-3 py-4 text-sm text-gray-500 text-center">
+                        {dropdownLoading ? 'Đang tải...' : 'Không tìm thấy học sinh phù hợp'}
+                      </div>
+                    ) : (
+                      filteredUsers.map((u) => {
+                        const isSelected = newEnrollment.userId === u._id;
+                        return (
+                          <button
+                            key={u._id}
+                            type="button"
+                            onClick={() => setNewEnrollment({ ...newEnrollment, userId: u._id })}
+                            className={`w-full text-left px-3 py-2 transition-colors ${
+                              isSelected
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-white hover:bg-gray-50 text-gray-800'
+                            }`}
+                          >
+                            <div className="font-medium">{u.fullName || 'Chưa có tên'}</div>
+                            <div className={`text-xs ${isSelected ? 'text-white/80' : 'text-gray-500'}`}>
+                              {u.email || 'Chưa có email'}
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Hiển thị tối đa 50 kết quả phù hợp.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tìm và chọn khóa học *</label>
+                  <input
+                    type="text"
+                    value={courseSearch}
+                    onChange={(e) => setCourseSearch(e.target.value)}
+                    placeholder="Nhập tên khóa học, triều đại, độ khó..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                  />
+
+                  {selectedCourse && (
+                    <div className="mt-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm">
+                      <p className="font-medium text-green-800">Đã chọn: {selectedCourse.title}</p>
+                      <p className="text-green-700">
+                        {[selectedCourse.dynasty, selectedCourse.difficulty].filter(Boolean).join(' • ') || 'Khóa học'}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="mt-2 max-h-56 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
+                    {filteredCourses.length === 0 ? (
+                      <div className="px-3 py-4 text-sm text-gray-500 text-center">
+                        {dropdownLoading ? 'Đang tải...' : 'Không tìm thấy khóa học phù hợp'}
+                      </div>
+                    ) : (
+                      filteredCourses.map((c) => {
+                        const isSelected = newEnrollment.courseId === c._id;
+                        return (
+                          <button
+                            key={c._id}
+                            type="button"
+                            onClick={() => setNewEnrollment({ ...newEnrollment, courseId: c._id })}
+                            className={`w-full text-left px-3 py-2 transition-colors ${
+                              isSelected
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-white hover:bg-gray-50 text-gray-800'
+                            }`}
+                          >
+                            <div className="font-medium">{c.title || 'Chưa có tên khóa học'}</div>
+                            <div className={`text-xs ${isSelected ? 'text-white/80' : 'text-gray-500'}`}>
+                              {[c.dynasty, c.difficulty].filter(Boolean).join(' • ') || 'Khóa học'}
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Hiển thị tối đa 50 kết quả phù hợp.
+                  </p>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -298,7 +429,7 @@ const AdminEnrollments = () => {
                   id="isPaid"
                   checked={newEnrollment.isPaid}
                   onChange={(e) => setNewEnrollment({ ...newEnrollment, isPaid: e.target.checked })}
-                  className="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded"
+                  className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="isPaid" className="text-sm font-medium text-gray-700">
                   Đã thanh toán
@@ -310,7 +441,7 @@ const AdminEnrollments = () => {
                 <textarea
                   value={newEnrollment.note}
                   onChange={(e) => setNewEnrollment({ ...newEnrollment, note: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                   rows={3}
                   placeholder="Ghi chú thêm (tùy chọn)"
                 />
@@ -326,8 +457,8 @@ const AdminEnrollments = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+                  disabled={submitting || dropdownLoading || !newEnrollment.userId || !newEnrollment.courseId}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? 'Đang tạo...' : 'Tạo đăng ký'}
                 </button>
