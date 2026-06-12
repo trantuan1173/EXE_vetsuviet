@@ -7,6 +7,9 @@ const courseService = {
 
   getCourseDetail: (id) => api.get(`/courses/${id}`),
 
+  getCourseLeaderboard: (id, limit = 5) =>
+    api.get(`/courses/${id}/leaderboard`, { params: { limit } }),
+
   getCoursePlaybackUrl: (id) => api.get(`/courses/${id}/video/playback`),
 
   enrollCourse: (id) => api.post(`/courses/${id}/enroll`),

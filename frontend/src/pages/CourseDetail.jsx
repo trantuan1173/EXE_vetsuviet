@@ -14,13 +14,16 @@ const CourseDetail = () => {
 
   const [course, setCourse] = useState(null);
   const [products, setProducts] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     fetchCourseDetail();
     fetchProducts();
+    fetchLeaderboard();
   }, [id]);
 
   const fetchProducts = async () => {
@@ -46,6 +49,19 @@ const CourseDetail = () => {
       navigate('/courses');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchLeaderboard = async () => {
+    setLeaderboardLoading(true);
+    try {
+      const response = await courseService.getCourseLeaderboard(id, 5);
+      setLeaderboard(response.data.data.leaderboard || []);
+    } catch (err) {
+      console.error('Error fetching leaderboard:', err);
+      setLeaderboard([]);
+    } finally {
+      setLeaderboardLoading(false);
     }
   };
 
@@ -85,54 +101,14 @@ const CourseDetail = () => {
   if (loading) return <Loading fullPage />;
   if (!course) return null;
 
-  // Mock data for leaderboard
-  const leaderboard = [
-    {
-      rank: 1,
-      name: 'Quốc Anh',
-      level: 'Học giả kì cựu',
-      xp: '12,450 XP',
-      avatar: 'https://i.pravatar.cc/40?img=1',
-      highlight: true,
-    },
-    {
-      rank: 2,
-      name: 'Minh Nhung',
-      level: 'Đang nỗ lực',
-      xp: '10,800 XP',
-      avatar: 'https://i.pravatar.cc/40?img=2',
-    },
-    {
-      rank: 3,
-      name: 'Đăng Khoa',
-      level: 'Học viên mới',
-      xp: '9,200 XP',
-      avatar: 'https://i.pravatar.cc/40?img=3',
-    },
-    {
-      rank: 4,
-      name: 'Đăng Khoa',
-      level: 'Học viên mới',
-      xp: '9,200 XP',
-      avatar: 'https://i.pravatar.cc/40?img=4',
-    },
-    {
-      rank: 5,
-      name: 'Đăng Khoa',
-      level: 'Học viên mới',
-      xp: '9,200 XP',
-      avatar: 'https://i.pravatar.cc/40?img=5',
-    },
-  ];
-
   return (
     <div className="bg-[#FFF7E4] min-h-screen pt-10">
 
       <div className="max-w-[1366px] mx-auto px-9 ">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-6">
-          <Link to="/" className="text-[#6F0D0D] text-sm font-bold tracking-[0.05em]">
-            Trang chủ
+          <Link to="/courses" className="text-[#6F0D0D] text-sm font-bold tracking-[0.05em]">
+            Khoá học
           </Link>
           <svg width="4" height="7" viewBox="0 0 4 7" fill="none" className="mx-2">
             <path d="M0.5 0.5L3.5 3.5L0.5 6.5" stroke="#6F0D0D" strokeLinecap="round" />
@@ -235,45 +211,63 @@ const CourseDetail = () => {
 
               {/* Leaderboard List */}
               <div className="space-y-4">
-                {leaderboard.map((user) => (
+                {leaderboardLoading ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#6F0D0D] border-t-transparent"></div>
+                  </div>
+                ) : leaderboard.length > 0 ? (
+                  leaderboard.map((user) => {
+                    const isTopRank = user.rank === 1;
+                    const displayName = user.name || 'Học viên';
+                    const avatar =
+                      user.avatar ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6F0D0D&color=fff`;
+
+                    return (
                   <div
-                    key={user.rank}
+                    key={user.userId || user.rank}
                     className={`flex items-center justify-between p-2 rounded-lg ${
-                      user.highlight ? 'bg-[#FFF1ED]' : ''
+                      isTopRank ? 'bg-[#FFF1ED]' : ''
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       {/* Rank */}
                       <div className="w-6">
-                        <span className={`text-base font-bold ${user.highlight ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                        <span className={`text-base font-bold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
                           {user.rank}
                         </span>
                       </div>
 
                       {/* Avatar */}
                       <img
-                        src={user.avatar}
-                        alt={user.name}
+                        src={avatar}
+                        alt={displayName}
                         className="w-10 h-10 rounded-full object-cover"
                       />
 
                       {/* Name & Level */}
                       <div>
-                        <div className={`text-sm leading-5 ${user.highlight ? 'font-normal' : 'font-normal'}`}>
-                          {user.name}
+                        <div className={`text-sm leading-5 ${isTopRank ? 'font-normal' : 'font-normal'}`}>
+                          {displayName}
                         </div>
                         <div className="text-[#57413F] text-[10px] leading-[15px]">
-                          {user.level}
+                          Cấp {user.level || 1} · {user.completedQuizzes || 0} quiz
                         </div>
                       </div>
                     </div>
 
                     {/* XP */}
-                    <div className={`text-base font-semibold ${user.highlight ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
-                      {user.xp}
+                    <div className={`text-base font-semibold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                      {(user.xp || 0).toLocaleString('vi-VN')} XP
                     </div>
                   </div>
-                ))}
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-8 text-[#57413F]">
+                    Chưa có dữ liệu xếp hạng
+                  </div>
+                )}
               </div>
             </div>
           </div>

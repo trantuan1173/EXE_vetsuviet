@@ -3,6 +3,7 @@ const Chapter = require('../models/Chapter');
 const Lesson = require('../models/Lesson');
 const Enrollment = require('../models/Enrollment');
 const User = require('../models/User');
+const QuizHistory = require('../models/QuizHistory');
 const storageService = require('./storageService');
 const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } = require('../utils/constants');
 
@@ -58,6 +59,58 @@ const courseService = {
     if (!course) throw new Error('Course not found');
     const normalizedCourse = await withSignedCoverUrl(course);
     return { course: normalizedCourse };
+  },
+
+  getCourseLeaderboard: async (courseId, limit = 5) => {
+    const course = await Course.findById(courseId).select('_id');
+    if (!course) throw new Error('Course not found');
+
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 20);
+
+    const leaderboard = await QuizHistory.aggregate([
+      { $match: { courseId: course._id } },
+      {
+        $group: {
+          _id: '$userId',
+          xp: { $sum: '$xpEarned' },
+          averageScore: { $avg: '$score' },
+          completedQuizzes: { $sum: 1 },
+          latestCompletedAt: { $max: '$completedAt' },
+        },
+      },
+      { $match: { xp: { $gt: 0 } } },
+      { $sort: { xp: -1, averageScore: -1, latestCompletedAt: 1 } },
+      { $limit: safeLimit },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $unwind: '$user' },
+      { $match: { 'user.isActive': true } },
+      {
+        $project: {
+          _id: 0,
+          userId: '$_id',
+          name: '$user.fullName',
+          avatar: '$user.avatar',
+          level: '$user.level',
+          xp: 1,
+          averageScore: { $round: ['$averageScore', 1] },
+          completedQuizzes: 1,
+        },
+      },
+    ]);
+
+    return {
+      leaderboard: leaderboard.map((user, index) => ({
+        ...user,
+        rank: index + 1,
+      })),
+    };
   },
 
   enrollCourse: async (userId, courseId) => {

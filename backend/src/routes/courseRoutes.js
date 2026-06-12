@@ -7,6 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.get('/', courseController.getCourses);
 router.get('/random', courseController.getRandomCourses);
 router.get('/enrolled', authMiddleware, courseController.getEnrolledCourses);
+router.get('/:id/leaderboard', courseController.getCourseLeaderboard);
 router.get('/:id', courseController.getCourseDetail);
 router.get('/:id/video/playback', authMiddleware, courseController.getCourseVideoPlayback);
 

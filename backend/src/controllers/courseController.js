@@ -31,6 +31,16 @@ const courseController = {
     }
   },
 
+  getCourseLeaderboard: async (req, res, next) => {
+    try {
+      const { limit } = req.query;
+      const result = await courseService.getCourseLeaderboard(req.params.id, limit);
+      sendResponse(res, 200, true, 'Course leaderboard retrieved', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   getCourseVideoPlayback: async (req, res, next) => {
     try {
       const result = await courseService.getCoursePlaybackUrl(req.params.id, req.user.id);
