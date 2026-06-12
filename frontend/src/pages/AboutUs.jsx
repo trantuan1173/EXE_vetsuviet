@@ -25,12 +25,12 @@ const AboutUs = () => {
 
                     {/* Heading */}
                     <h1
-                        className="text-white leading-[60px] mb-4"
+                        className="text-white leading-[75px] mb-4"
                         style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 600, fontSize: '60px', letterSpacing: '-0.02em' }}
                     >
                         Lịch sử không nên chỉ được học.
                         <br />
-                        <span className="italic font-medium" style={{ color: '#FFDAD6' }}>
+                        <span className="italic font-medium" style={{ color: '#FFDAD6'}}>
                             Lịch sử cần để lại dấu ấn.
                         </span>
                     </h1>
