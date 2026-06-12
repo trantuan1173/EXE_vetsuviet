@@ -19,12 +19,14 @@ const CourseDetail = () => {
   const [productsLoading, setProductsLoading] = useState(true);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
 
   useEffect(() => {
     fetchCourseDetail();
     fetchProducts();
     fetchLeaderboard();
-  }, [id]);
+    fetchCoursePaidStatus();
+  }, [id, isAuthenticated]);
 
   const fetchProducts = async () => {
     setProductsLoading(true);
@@ -49,6 +51,26 @@ const CourseDetail = () => {
       navigate('/courses');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCoursePaidStatus = async () => {
+    if (!isAuthenticated) {
+      setIsPaid(false);
+      return;
+    }
+
+    try {
+      const response = await courseService.getEnrolledCourses();
+      const paidEnrollment = response.data.data.find((enrollment) => {
+        const courseId = enrollment.courseId?._id || enrollment.courseId;
+        return courseId === id && enrollment.isPaid;
+      });
+
+      setIsPaid(Boolean(paidEnrollment));
+    } catch (err) {
+      console.error('Error fetching course paid status:', err);
+      setIsPaid(false);
     }
   };
 
@@ -164,13 +186,15 @@ const CourseDetail = () => {
                   >
                     Tiếp tục học
                   </button>
-                  <button
-                    onClick={handlePurchase}
-                    disabled={enrolling}
-                    className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
-                  >
-                    {enrolling ? 'Đang xử lý...' : 'Mua ngay'}
-                  </button>
+                  {!isPaid && (
+                    <button
+                      onClick={handlePurchase}
+                      disabled={enrolling}
+                      className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
+                    >
+                      {enrolling ? 'Đang xử lý...' : 'Mua ngay'}
+                    </button>
+                  )}
                 </div>
 
                 {/* Features List */}
