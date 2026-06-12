@@ -57,10 +57,10 @@ const CourseDetail = () => {
 
     setEnrolling(true);
     try {
-      // await courseService.enrollCourse(id);
-      // success('Ghi danh khóa học thành công!');
-      // navigate(`/courses/${id}/learn`);
-      window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')
+      await courseService.enrollCourse(id);
+      success('Ghi danh khóa học thành công!');
+      navigate(`/courses/${id}/learn`);
+      // window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')
     } catch (err) {
       if (err.response?.data?.message === 'Already enrolled in this course') {
         navigate(`/courses/${id}/learn`);
@@ -71,6 +71,16 @@ const CourseDetail = () => {
       setEnrolling(false);
     }
   };
+
+  const handlePurchase = () => {
+  handleEnroll()
+    .then(() => {
+      window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank');
+    })
+    .catch((error) => {
+      console.error("Lỗi đăng ký:", error);
+    });
+};
 
   if (loading) return <Loading fullPage />;
   if (!course) return null;
@@ -172,13 +182,14 @@ const CourseDetail = () => {
                 {/* Buttons */}
                 <div className="flex gap-4 mb-6">
                   <button
-                    onClick={() => navigate(`/courses/${id}/learn`)}
+                    onClick={handleEnroll}
+                    disabled={enrolling}
                     className="bg-white text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
                   >
                     Tiếp tục học
                   </button>
                   <button
-                    onClick={handleEnroll}
+                    onClick={handlePurchase}
                     disabled={enrolling}
                     className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
                   >
