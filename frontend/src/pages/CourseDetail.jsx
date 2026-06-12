@@ -197,6 +197,7 @@ const CourseDetail = () => {
               </div>
             </div>
 
+
             {/* Leaderboard Section */}
             <div className="bg-[rgba(255,210,105,0.7)] rounded-2xl p-6 shadow-[0_4px_12px_0_rgba(111,13,13,0.08)]">
               {/* Header */}

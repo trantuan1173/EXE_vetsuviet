@@ -17,13 +17,22 @@ const withSignedCoverUrl = async (course) => {
 
   const plain = typeof course.toObject === 'function' ? course.toObject() : { ...course };
 
-  if (!course.coverImageKey) return plain;
+  if (course.coverImageKey) {
+    try {
+      const signedUrl = await storageService.getSignedPlaybackUrl(course.coverImageKey, PRESIGNED_TTL_SECONDS);
+      plain.thumbnail = signedUrl;
+    } catch {
+      // Storage not configured or unavailable – keep existing thumbnail (if any)
+    }
+  }
 
-  try {
-    const signedUrl = await storageService.getSignedPlaybackUrl(course.coverImageKey, PRESIGNED_TTL_SECONDS);
-    plain.thumbnail = signedUrl;
-  } catch {
-    // Storage not configured or unavailable – keep existing thumbnail (if any)
+  if (course.mindmapImageKey) {
+    try {
+      const signedUrl = await storageService.getSignedPlaybackUrl(course.mindmapImageKey, PRESIGNED_TTL_SECONDS);
+      plain.mindmapImage = signedUrl;
+    } catch {
+      // Storage not configured or unavailable – keep existing mindmap image (if any)
+    }
   }
 
   return plain;
@@ -146,7 +155,11 @@ const courseService = {
   deleteCourse: async (courseId) => {
     const course = await Course.findByIdAndDelete(courseId);
     if (!course) throw new Error('Course not found');
-    await Promise.all([storageService.deleteObject(course.videoKey), storageService.deleteObject(course.coverImageKey)]);
+    await Promise.all([
+      storageService.deleteObject(course.videoKey),
+      storageService.deleteObject(course.coverImageKey),
+      storageService.deleteObject(course.mindmapImageKey),
+    ]);
     return course;
   },
 
@@ -218,6 +231,18 @@ const courseService = {
     return { uploadId: upload.UploadId, key, partSize: 5 * 1024 * 1024 };
   },
 
+  initCourseMindmapUpload: async ({ courseId, fileName, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (!fileSize || fileSize > MAX_COVER_IMAGE_SIZE_BYTES) throw new Error('Mindmap image size exceeds limit');
+    const normalizedType = contentType || 'image/jpeg';
+    if (!ALLOWED_COVER_IMAGE_TYPES.has(normalizedType)) throw new Error('Invalid mindmap image type');
+    const safeName = (fileName || 'mindmap.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `courses/${courseId}/mindmaps/${Date.now()}-${safeName}`;
+    const upload = await storageService.createMultipartUpload({ key, contentType: normalizedType });
+    return { uploadId: upload.UploadId, key, partSize: 5 * 1024 * 1024 };
+  },
+
   signCourseVideoPart: async ({ key, uploadId, partNumber }) => {
     if (!partNumber || partNumber < 1) throw new Error('Invalid partNumber');
     const signedUrl = await storageService.getUploadPartSignedUrl({ key, uploadId, partNumber });
@@ -258,8 +283,30 @@ const courseService = {
     return { course: normalizedCourse };
   },
 
+  completeCourseMindmapUpload: async ({ courseId, key, uploadId, parts, contentType, fileSize }) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    const normalizedType = contentType || 'image/jpeg';
+    if (!ALLOWED_COVER_IMAGE_TYPES.has(normalizedType)) throw new Error('Invalid mindmap image type');
+    if (!fileSize || fileSize > MAX_COVER_IMAGE_SIZE_BYTES) throw new Error('Mindmap image size exceeds limit');
+
+    await storageService.completeMultipartUpload({ key, uploadId, parts });
+    if (course.mindmapImageKey && course.mindmapImageKey !== key) await storageService.deleteObject(course.mindmapImageKey);
+
+    const playbackUrl = await storageService.getSignedPlaybackUrl(key, PRESIGNED_TTL_SECONDS);
+
+    course.mindmapImageKey = key;
+    course.mindmapImageMimeType = normalizedType;
+    course.mindmapImageSize = fileSize || 0;
+    course.mindmapImage = playbackUrl;
+    await course.save();
+    const normalizedCourse = await withSignedCoverUrl(course);
+    return { course: normalizedCourse };
+  },
+
   abortCourseVideoUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
   abortCourseCoverUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
+  abortCourseMindmapUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
 
   // getCoursePlaybackUrl: async (courseId, userId) => {
   //   const course = await Course.findById(courseId);
@@ -317,6 +364,20 @@ const courseService = {
     course.coverImageMimeType = null;
     course.coverImageSize = 0;
     course.thumbnail = null;
+    await course.save();
+    return course;
+  },
+
+  deleteCourseMindmap: async (courseId) => {
+    const course = await Course.findById(courseId);
+    if (!course) throw new Error('Course not found');
+    if (course.mindmapImageKey) {
+      await storageService.deleteObject(course.mindmapImageKey);
+    }
+    course.mindmapImageKey = null;
+    course.mindmapImageMimeType = null;
+    course.mindmapImageSize = 0;
+    course.mindmapImage = null;
     await course.save();
     return course;
   },

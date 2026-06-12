@@ -13,6 +13,7 @@ const EMPTY_COURSE = {
   dynasty: '',
   difficulty: 'basic',
   thumbnail: '',
+  mindmapImage: '',
   content: '',
   videoUrl: '',
   duration: 0,
@@ -51,6 +52,8 @@ const AdminCourses = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadingCoverCourseId, setUploadingCoverCourseId] = useState(null);
   const [coverUploadProgress, setCoverUploadProgress] = useState(0);
+  const [uploadingMindmapCourseId, setUploadingMindmapCourseId] = useState(null);
+  const [mindmapUploadProgress, setMindmapUploadProgress] = useState(0);
 
   useEffect(() => {
     fetchCourses();
@@ -60,6 +63,7 @@ const AdminCourses = () => {
     ...EMPTY_COURSE,
     ...course,
     thumbnail: course?.thumbnail || '',
+    mindmapImage: course?.mindmapImage || '',
     videoUrl: course?.videoUrl || '',
     content: course?.content || '',
     duration: course?.duration || 0,
@@ -278,6 +282,43 @@ const AdminCourses = () => {
     }
   };
 
+  const deleteCourseMindmap = async (courseId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa ảnh mindmap của khóa học này không? Hành động này không thể hoàn tác.')) return;
+    try {
+      await adminService.deleteCourseMindmap(courseId);
+      await fetchCourses();
+      await loadCourseDetail(courseId);
+      alert('Xóa ảnh mindmap thành công');
+    } catch (err) {
+      alert(err.message || 'Không thể xóa ảnh mindmap');
+    }
+  };
+
+  const uploadCourseMindmap = async (courseId, file) => {
+    try {
+      setUploadingMindmapCourseId(courseId);
+      await uploadMultipartFile({
+        file,
+        initUpload: () => adminService.initCourseMindmapUpload(courseId, {
+          fileName: file.name,
+          contentType: file.type || 'image/jpeg',
+          fileSize: file.size,
+        }),
+        completeUpload: (payload) => adminService.completeCourseMindmapUpload(courseId, payload),
+        abortUpload: (payload) => adminService.abortCourseMindmapUpload(payload),
+        setProgress: setMindmapUploadProgress,
+      });
+      await fetchCourses();
+      await loadCourseDetail(courseId);
+      alert('Tải ảnh mindmap lên thành công');
+    } catch (err) {
+      alert(err.message || 'Không thể tải ảnh mindmap lên');
+    } finally {
+      setUploadingMindmapCourseId(null);
+      setMindmapUploadProgress(0);
+    }
+  };
+
   if (loading) return <AdminLayout><Loading /></AdminLayout>;
 
   return (
@@ -376,26 +417,54 @@ const AdminCourses = () => {
                          Xóa ảnh bìa
                        </button>
                      )}
-                     <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
-                       {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
-                       <input
-                         type="file"
-                         accept="image/jpeg,image/png,image/webp"
-                         disabled={uploadingCoverCourseId === selectedCourse._id}
-                         onChange={(e) => {
-                           const file = e.target.files?.[0];
-                           if (file) uploadCourseCover(selectedCourse._id, file);
-                           e.target.value = '';
-                         }}
-                         className="hidden"
-                       />
-                     </label>
+                      <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
+                        {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={uploadingCoverCourseId === selectedCourse._id}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) uploadCourseCover(selectedCourse._id, file);
+                            e.target.value = '';
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                      {selectedCourse.mindmapImageKey && (
+                        <button onClick={() => deleteCourseMindmap(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                          Xóa mindmap
+                        </button>
+                      )}
+                      <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingMindmapCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'}`}>
+                        {uploadingMindmapCourseId === selectedCourse._id ? `Mindmap ${mindmapUploadProgress}%` : 'Tải mindmap'}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={uploadingMindmapCourseId === selectedCourse._id}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) uploadCourseMindmap(selectedCourse._id, file);
+                            e.target.value = '';
+                          }}
+                          className="hidden"
+                        />
+                      </label>
                      <button onClick={() => openCourseModal(selectedCourse)} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm">
                        Sửa nội dung
                      </button>
                   </div>
                 </div>
               </div>
+
+              {selectedCourse.mindmapImage && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                  <h3 className="font-semibold text-gray-900 mb-3">Mindmap khóa học</h3>
+                  <div className="rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
+                    <img src={selectedCourse.mindmapImage} alt={`Mindmap ${selectedCourse.title}`} className="w-full h-auto object-contain" />
+                  </div>
+                </div>
+              )}
 
               {selectedPlaybackUrl ? (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -458,6 +527,11 @@ const AdminCourses = () => {
           </div>
 
           <div>
+            <label className="block text-sm font-medium mb-1">Ảnh mindmap</label>
+            <input type="text" value={currentCourse.mindmapImage || ''} onChange={(e) => setCurrentCourse({ ...currentCourse, mindmapImage: e.target.value })} placeholder="Sẽ tự cập nhật khi dùng nút Tải mindmap ở panel chi tiết" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+          </div>
+
+          <div>
             <label className="block text-sm font-medium mb-1">Mô tả ngắn</label>
             <textarea value={currentCourse.description} onChange={(e) => setCurrentCourse({ ...currentCourse, description: e.target.value })} rows={3} className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
           </div>
@@ -465,6 +539,7 @@ const AdminCourses = () => {
           <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg p-3 space-y-1">
             <p>Video tải lên bằng nút <span className="font-medium">Tải video</span> ở panel chi tiết và lưu private trong MinIO.</p>
             <p>Ảnh bìa tải lên bằng nút <span className="font-medium">Tải ảnh bìa</span> và dùng signed URL từ MinIO.</p>
+            <p>Ảnh mindmap tải lên bằng nút <span className="font-medium">Tải mindmap</span> và dùng signed URL từ MinIO.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

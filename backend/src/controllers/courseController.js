@@ -109,6 +109,24 @@ const courseController = {
     }
   },
 
+  initCourseMindmapUpload: async (req, res, next) => {
+    try {
+      const result = await courseService.initCourseMindmapUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Mindmap upload initialized', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  completeCourseMindmapUpload: async (req, res, next) => {
+    try {
+      const result = await courseService.completeCourseMindmapUpload({ courseId: req.params.id, ...req.body });
+      sendResponse(res, 200, true, 'Mindmap upload completed', result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   abortCourseVideoUpload: async (req, res, next) => {
     try {
       await courseService.abortCourseVideoUpload(req.body);
@@ -127,6 +145,15 @@ const courseController = {
     }
   },
 
+  abortCourseMindmapUpload: async (req, res, next) => {
+    try {
+      await courseService.abortCourseMindmapUpload(req.body);
+      sendResponse(res, 200, true, 'Mindmap upload aborted');
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteCourseVideo: async (req, res, next) => {
     try {
       await courseService.deleteCourseVideo(req.params.id);
@@ -140,6 +167,15 @@ const courseController = {
     try {
       await courseService.deleteCourseCover(req.params.id);
       sendResponse(res, 200, true, 'Cover deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteCourseMindmap: async (req, res, next) => {
+    try {
+      await courseService.deleteCourseMindmap(req.params.id);
+      sendResponse(res, 200, true, 'Mindmap deleted successfully');
     } catch (error) {
       next(error);
     }

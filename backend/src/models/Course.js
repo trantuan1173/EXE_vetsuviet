@@ -59,6 +59,23 @@ const courseSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    mindmapImage: {
+      type: String,
+      default: null,
+    },
+    mindmapImageKey: {
+      type: String,
+      default: null,
+    },
+    mindmapImageMimeType: {
+      type: String,
+      default: null,
+    },
+    mindmapImageSize: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     duration: {
       type: Number,
       default: 0,

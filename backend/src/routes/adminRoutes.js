@@ -52,6 +52,10 @@ router.post('/courses/:id/cover/init', courseController.initCourseCoverUpload);
 router.post('/courses/:id/cover/complete', courseController.completeCourseCoverUpload);
 router.post('/courses/cover/abort', courseController.abortCourseCoverUpload);
 router.delete('/courses/:id/cover', courseController.deleteCourseCover);
+router.post('/courses/:id/mindmap/init', courseController.initCourseMindmapUpload);
+router.post('/courses/:id/mindmap/complete', courseController.completeCourseMindmapUpload);
+router.post('/courses/mindmap/abort', courseController.abortCourseMindmapUpload);
+router.delete('/courses/:id/mindmap', courseController.deleteCourseMindmap);
 
 // Chapter management
 router.post('/chapters', courseController.createChapter);

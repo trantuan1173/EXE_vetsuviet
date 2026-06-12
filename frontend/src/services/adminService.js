@@ -20,8 +20,12 @@ const adminService = {
   initCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/init`, data),
   completeCourseCoverUpload: (id, data) => api.post(`/admin/courses/${id}/cover/complete`, data),
   abortCourseCoverUpload: (data) => api.post('/admin/courses/cover/abort', data),
+  initCourseMindmapUpload: (id, data) => api.post(`/admin/courses/${id}/mindmap/init`, data),
+  completeCourseMindmapUpload: (id, data) => api.post(`/admin/courses/${id}/mindmap/complete`, data),
+  abortCourseMindmapUpload: (data) => api.post('/admin/courses/mindmap/abort', data),
   deleteCourseVideo: (id) => api.delete(`/admin/courses/${id}/video`),
   deleteCourseCover: (id) => api.delete(`/admin/courses/${id}/cover`),
+  deleteCourseMindmap: (id) => api.delete(`/admin/courses/${id}/mindmap`),
 
   // Quizzes
   getAllQuizzes: (params) => api.get('/admin/quizzes', { params }),

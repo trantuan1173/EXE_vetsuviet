@@ -15,6 +15,7 @@ const LessonView = () => {
   const [videoMessage, setVideoMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
+  const [isMindmapOpen, setIsMindmapOpen] = useState(false);
 
   useEffect(() => {
     fetchCourse();
@@ -145,7 +146,7 @@ const LessonView = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 gap-4">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-20">
               <h3 className="font-heading font-semibold text-gray-900 mb-4">Thông tin khóa học</h3>
               <div className="space-y-3 text-sm text-gray-600">
@@ -159,6 +160,70 @@ const LessonView = () => {
                 </div>
               </div>
             </div>
+
+            {/* {course.mindmapImage && (
+              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_12px_0_rgba(111,13,13,0.08)]">
+                <div className="flex items-center gap-2 pb-4 border-b border-[rgba(222,191,188,0.3)] mb-6">
+                  <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+                    <path d="M10 0L12.245 6.755L19 9L12.245 11.245L10 18L7.755 11.245L1 9L7.755 6.755L10 0Z" fill="#4B0003" />
+                  </svg>
+                  <h5 className="text-[#281713]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                    MINDMAP KHOÁ HỌC
+                  </h5>
+                </div>
+                <a href={course.mindmapImage} target="_blank" rel="noreferrer" className="block">
+                  <img
+                    src={course.mindmapImage}
+                    alt={`Mindmap ${course.title}`}
+                    className="w-full rounded-xl border border-[#DEBFBC]/30 object-contain bg-[#FFF7E4]"
+                  />
+                </a>
+              </div>
+            )} */}
+            {/* Phần hiển thị thumbnail Mindmap */}
+            {course.mindmapImage && (
+              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_12px_0_rgba(111,13,13,0.08)]">
+                <div className="flex items-center gap-2 pb-4 border-b border-[rgba(222,191,188,0.3)] mb-6">
+                  <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+                    <path d="M10 0L12.245 6.755L19 9L12.245 11.245L10 18L7.755 11.245L1 9L7.755 6.755L10 0Z" fill="#4B0003" />
+                  </svg>
+                  <h5 className="text-[#281713]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                    MINDMAP KHOÁ HỌC
+                  </h5>
+                </div>
+
+                {/* Thay thẻ <a> bằng thẻ <img> có sự kiện onClick */}
+                <img
+                  src={course.mindmapImage}
+                  alt={`Mindmap ${course.title}`}
+                  className="w-full rounded-xl border border-[#DEBFBC]/30 object-contain bg-[#FFF7E4] cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => setIsMindmapOpen(true)}
+                />
+              </div>
+            )}
+
+            {/* Modal Popup hiển thị ảnh */}
+            {isMindmapOpen && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+                onClick={() => setIsMindmapOpen(false)}
+              >
+                <div className="relative max-w-5xl w-full max-h-[90vh] flex justify-center">
+                  <button
+                    className="absolute -top-10 right-0 text-white font-bold hover:text-gray-300"
+                    onClick={() => setIsMindmapOpen(false)}
+                  >
+                    Đóng (X)
+                  </button>
+                  <img
+                    src={course.mindmapImage}
+                    alt="Mindmap Preview"
+                    className="max-w-full max-h-[85vh] rounded-lg shadow-2xl"
+                    onClick={(e) => e.stopPropagation()} // Ngăn việc đóng modal khi click vào ảnh
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
