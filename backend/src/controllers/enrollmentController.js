@@ -15,6 +15,7 @@ exports.getAllEnrollments = async (req, res) => {
       search = '',
       isPaid,
       courseId,
+      userId,
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page));
@@ -27,6 +28,9 @@ exports.getAllEnrollments = async (req, res) => {
     }
     if (courseId) {
       filter.courseId = courseId;
+    }
+    if (userId) {
+      filter.userId = userId;
     }
 
     // If search is provided, find matching users first

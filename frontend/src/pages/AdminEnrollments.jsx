@@ -8,6 +8,8 @@ const AdminEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterPaid, setFilterPaid] = useState('');
+  const [filterUserId, setFilterUserId] = useState('');
+  const [filterCourseId, setFilterCourseId] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
   // Modal state for adding new enrollment
@@ -24,7 +26,11 @@ const AdminEnrollments = () => {
 
   useEffect(() => {
     fetchEnrollments();
-  }, [pagination.page, filterPaid]);
+  }, [pagination.page, filterPaid, filterUserId, filterCourseId]);
+
+  useEffect(() => {
+    loadDropdownData();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,6 +46,8 @@ const AdminEnrollments = () => {
       const params = { page: pagination.page, limit: 20 };
       if (search) params.search = search;
       if (filterPaid !== '') params.isPaid = filterPaid;
+      if (filterUserId) params.userId = filterUserId;
+      if (filterCourseId) params.courseId = filterCourseId;
 
       const response = await adminService.getAllEnrollments(params);
       const data = response.data.data;
@@ -112,6 +120,18 @@ const AdminEnrollments = () => {
   const selectedUser = users.find((u) => u._id === newEnrollment.userId);
   const selectedCourse = courses.find((c) => c._id === newEnrollment.courseId);
 
+  const handleFilterChange = (setter) => (e) => {
+    setter(e.target.value);
+    setPagination((p) => ({ ...p, page: 1 }));
+  };
+
+  const clearAdvancedFilters = () => {
+    setFilterUserId('');
+    setFilterCourseId('');
+    setFilterPaid('');
+    setPagination((p) => ({ ...p, page: 1 }));
+  };
+
   const handleCreateEnrollment = async (e) => {
     e.preventDefault();
     if (!newEnrollment.userId || !newEnrollment.courseId) {
@@ -178,23 +198,61 @@ const AdminEnrollments = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Tìm theo tên, email hoặc khóa học..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-        />
-        <select
-          value={filterPaid}
-          onChange={(e) => { setFilterPaid(e.target.value); setPagination((p) => ({ ...p, page: 1 })); }}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-        >
-          <option value="">Tất cả trạng thái</option>
-          <option value="true">Đã thanh toán</option>
-          <option value="false">Chưa thanh toán</option>
-        </select>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+          <input
+            type="text"
+            placeholder="Tìm theo tên, email hoặc khóa học..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="lg:col-span-2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          />
+          <select
+            value={filterPaid}
+            onChange={handleFilterChange(setFilterPaid)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="true">Đã thanh toán</option>
+            <option value="false">Chưa thanh toán</option>
+          </select>
+          <button
+            type="button"
+            onClick={clearAdvancedFilters}
+            disabled={!filterPaid && !filterUserId && !filterCourseId}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Xóa bộ lọc
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
+          <select
+            value={filterUserId}
+            onChange={handleFilterChange(setFilterUserId)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          >
+            <option value="">Tất cả học sinh</option>
+            {users.map((u) => (
+              <option key={u._id} value={u._id}>
+                {u.fullName || 'Chưa có tên'}{u.email ? ` - ${u.email}` : ''}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={filterCourseId}
+            onChange={handleFilterChange(setFilterCourseId)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          >
+            <option value="">Tất cả khóa học</option>
+            {courses.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.title || 'Chưa có tên khóa học'}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <p className="text-sm text-gray-500 mb-2">Tổng: {pagination.total} đăng ký</p>
