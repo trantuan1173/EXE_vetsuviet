@@ -2,6 +2,7 @@ const Course = require('../models/Course');
 const Chapter = require('../models/Chapter');
 const Lesson = require('../models/Lesson');
 const Enrollment = require('../models/Enrollment');
+const User = require('../models/User');
 const storageService = require('./storageService');
 const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } = require('../utils/constants');
 
@@ -207,18 +208,37 @@ const courseService = {
   abortCourseVideoUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
   abortCourseCoverUpload: async ({ key, uploadId }) => storageService.abortMultipartUpload({ key, uploadId }),
 
+  // getCoursePlaybackUrl: async (courseId, userId) => {
+  //   const course = await Course.findById(courseId);
+  //   if (!course || !course.videoKey) throw new Error('Video not found');
+
+  //   const enrollment = await Enrollment.findOne({ userId, courseId });
+  //   if (!enrollment || !enrollment.isPaid) {
+  //     throw new Error('Vui lòng mua khoá học để xem video');
+  //   }
+
+  //   const playbackUrl = await storageService.getSignedPlaybackUrl(course.videoKey, PRESIGNED_TTL_SECONDS);
+  //   return { playbackUrl, expiresIn: PRESIGNED_TTL_SECONDS };
+  // },
+
   getCoursePlaybackUrl: async (courseId, userId) => {
     const course = await Course.findById(courseId);
     if (!course || !course.videoKey) throw new Error('Video not found');
 
-    const enrollment = await Enrollment.findOne({ userId, courseId });
-    if (!enrollment || !enrollment.isPaid) {
-      throw new Error('Vui lòng mua khoá học để xem video');
+    // Admin bypass enrollment check
+    const user = await User.findById(userId);
+    if (!user || user.role !== 'admin') {
+      const enrollment = await Enrollment.findOne({ userId, courseId });
+      if (!enrollment || !enrollment.isPaid) {
+        throw new Error('Vui lòng mua khoá học để xem video');
+      }
     }
 
     const playbackUrl = await storageService.getSignedPlaybackUrl(course.videoKey, PRESIGNED_TTL_SECONDS);
     return { playbackUrl, expiresIn: PRESIGNED_TTL_SECONDS };
-  },
+},
+
+  
 
   deleteCourseVideo: async (courseId) => {
     const course = await Course.findById(courseId);

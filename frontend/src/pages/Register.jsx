@@ -65,7 +65,7 @@ const Register = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-heading font-bold text-gray-900">
-              🎌 Đăng ký
+              Đăng ký
             </h1>
             <p className="text-gray-500 mt-2">Tham gia cộng đồng Vết Sử Việt</p>
           </div>
