@@ -38,7 +38,7 @@ const CourseCard = ({ course }) => {
             {course.description}
           </p>
           <p className="text-lg font-bold text-primary-600">
-            {(course.price || 0).toLocaleString('vi-VN')}đ
+            {course.isPaid ? 'Vào học' : `${(course.price || 0).toLocaleString('vi-VN')}đ`}
           </p>
         </Card.Body>
         <Card.Footer>

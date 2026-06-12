@@ -29,9 +29,29 @@ const CourseList = () => {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const response = await courseService.getCourses(filters);
-      setCourses(response.data.data.courses);
-      setPagination(response.data.data.pagination);
+      const coursesResponse = await courseService.getCourses(filters);
+      const fetchedCourses = coursesResponse.data.data.courses;
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        setCourses(fetchedCourses);
+      } else {
+        const enrollmentsResponse = await courseService.getEnrolledCourses();
+        const paidCourseIds = new Set(
+          enrollmentsResponse.data.data
+            .filter((enrollment) => enrollment.isPaid)
+            .map((enrollment) => enrollment.courseId?._id || enrollment.courseId)
+        );
+
+        setCourses(
+          fetchedCourses.map((course) => ({
+            ...course,
+            isPaid: paidCourseIds.has(course._id),
+          }))
+        );
+      }
+
+      setPagination(coursesResponse.data.data.pagination);
     } catch (err) {
       error(err.response?.data?.message || 'Không thể tải khóa học');
     } finally {
