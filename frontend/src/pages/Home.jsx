@@ -13,7 +13,7 @@ const featureCards = [
   {
     title: 'Khám phá thêm',
     description: 'Chiêm ngưỡng hình ảnh, hiện vật và những dấu ấn lịch sử giúp bạn hiểu sâu hơn về quá khứ dân tộc.',
-    cta: '',
+    cta: 'Khám phá ngay',
     icon: '🔍',
   },
   {
@@ -95,6 +95,18 @@ const Home = () => {
               <Link
                 key={item.title}
                 to="/courses"
+                className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
+              >
+                {cardContent}
+              </Link>
+            );
+          }
+
+          if (item.title === 'Khám phá thêm') {
+            return (
+              <Link
+                key={item.title}
+                to="/shop"
                 className="rounded-xl border-b-4 border-[#6F0D0D] bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
               >
                 {cardContent}

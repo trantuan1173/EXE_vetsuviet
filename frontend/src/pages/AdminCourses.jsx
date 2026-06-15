@@ -202,7 +202,7 @@ const AdminCourses = () => {
       setProgress(100);
     } catch (err) {
       if (uploadSession) {
-        await abortUpload({ key: uploadSession.key, uploadId: uploadSession.uploadId }).catch(() => {});
+        await abortUpload({ key: uploadSession.key, uploadId: uploadSession.uploadId }).catch(() => { });
       }
       throw err;
     }
@@ -374,25 +374,27 @@ const AdminCourses = () => {
           ) : (
             <div className="space-y-4">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-28 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                        {selectedCourse.thumbnail ? (
-                          <img src={selectedCourse.thumbnail} alt={selectedCourse.title} className="w-full h-full object-cover" />
-                        ) : null}
-                      </div>
-                      <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedCourse.title}</h2>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {selectedCourse.dynasty} &middot; {selectedCourse.difficulty} &middot; {selectedCourse.enrolledCount || 0} học viên
-                    </p>
-                    <p className="text-sm font-semibold text-primary-600 mt-1">
-                      Giá: {(selectedCourse.price || 0).toLocaleString('vi-VN')}đ
-                    </p>
-                    {selectedCourse.description && <p className="text-sm text-gray-600 mt-2">{selectedCourse.description}</p>}
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-28 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      {selectedCourse.thumbnail ? (
+                        <img src={selectedCourse.thumbnail} alt={selectedCourse.title} className="w-full h-full object-cover" />
+                      ) : null}
                     </div>
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+                  </div>
+                  
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{selectedCourse.title}</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {selectedCourse.dynasty} &middot; {selectedCourse.difficulty} &middot; {selectedCourse.enrolledCount || 0} học viên
+                  </p>
+                  <p className="text-sm font-semibold text-primary-600 mt-1">
+                    Giá: {(selectedCourse.price || 0).toLocaleString('vi-VN')}đ
+                  </p>
+                  {selectedCourse.description && <p className="text-sm text-gray-600 mt-2">{selectedCourse.description}</p>}
+                </div>
+                <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
                     {selectedCourse.videoKey && (
                       <button onClick={() => deleteCourseVideo(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
                         Xóa video
@@ -410,51 +412,50 @@ const AdminCourses = () => {
                           e.target.value = '';
                         }}
                         className="hidden"
-                       />
-                     </label>
-                     {selectedCourse.coverImageKey && (
-                       <button onClick={() => deleteCourseCover(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
-                         Xóa ảnh bìa
-                       </button>
-                     )}
-                      <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
-                        {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          disabled={uploadingCoverCourseId === selectedCourse._id}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) uploadCourseCover(selectedCourse._id, file);
-                            e.target.value = '';
-                          }}
-                          className="hidden"
-                        />
-                      </label>
-                      {selectedCourse.mindmapImageKey && (
-                        <button onClick={() => deleteCourseMindmap(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
-                          Xóa mindmap
-                        </button>
-                      )}
-                      <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingMindmapCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'}`}>
-                        {uploadingMindmapCourseId === selectedCourse._id ? `Mindmap ${mindmapUploadProgress}%` : 'Tải mindmap'}
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          disabled={uploadingMindmapCourseId === selectedCourse._id}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) uploadCourseMindmap(selectedCourse._id, file);
-                            e.target.value = '';
-                          }}
-                          className="hidden"
-                        />
-                      </label>
-                     <button onClick={() => openCourseModal(selectedCourse)} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm">
-                       Sửa nội dung
-                     </button>
+                      />
+                    </label>
+                    {selectedCourse.coverImageKey && (
+                      <button onClick={() => deleteCourseCover(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                        Xóa ảnh bìa
+                      </button>
+                    )}
+                    <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingCoverCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
+                      {uploadingCoverCourseId === selectedCourse._id ? `Ảnh bìa ${coverUploadProgress}%` : 'Tải ảnh bìa'}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={uploadingCoverCourseId === selectedCourse._id}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadCourseCover(selectedCourse._id, file);
+                          e.target.value = '';
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    {selectedCourse.mindmapImageKey && (
+                      <button onClick={() => deleteCourseMindmap(selectedCourse._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                        Xóa mindmap
+                      </button>
+                    )}
+                    <label className={`cursor-pointer px-3 py-1.5 rounded-lg text-sm text-white ${uploadingMindmapCourseId === selectedCourse._id ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'}`}>
+                      {uploadingMindmapCourseId === selectedCourse._id ? `Mindmap ${mindmapUploadProgress}%` : 'Tải mindmap'}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={uploadingMindmapCourseId === selectedCourse._id}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadCourseMindmap(selectedCourse._id, file);
+                          e.target.value = '';
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    <button onClick={() => openCourseModal(selectedCourse)} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm">
+                      Sửa nội dung
+                    </button>
                   </div>
-                </div>
               </div>
 
               {selectedCourse.mindmapImage && (
@@ -481,7 +482,7 @@ const AdminCourses = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <h3 className="font-semibold text-gray-900 mb-3">Phần lý thuyết</h3>
                 {selectedCourse.content ? (
-                  <div 
+                  <div
                     className="text-sm text-gray-700 leading-6 prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: selectedCourse.content }}
                   />
@@ -565,7 +566,7 @@ const AdminCourses = () => {
                   [{ 'header': [1, 2, 3, false] }],
                   ['bold', 'italic', 'underline', 'strike'],
                   [{ 'color': [] }, { 'background': [] }],
-                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                   [{ 'align': [] }],
                   ['clean']
                 ]
