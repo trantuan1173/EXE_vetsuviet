@@ -52,6 +52,7 @@ const quizService = {
     if (questions.length === 0) throw new Error('No questions in this quiz');
 
     let correctCount = 0;
+    const questionResults = [];
 
     // Compare answers
     for (const question of questions) {
@@ -59,13 +60,11 @@ const quizService = {
         (a) => a.questionId === question._id.toString()
       );
 
-      if (!userAnswer) continue;
-
       const correctAnswerIds = question.answers
         .filter((a) => a.isCorrect)
         .map((a) => a._id.toString());
 
-      const selectedIds = userAnswer.selectedAnswerIds.map((id) => id.toString());
+      const selectedIds = userAnswer ? userAnswer.selectedAnswerIds.map((id) => id.toString()) : [];
 
       // Check if all correct answers match
       const isCorrect =
@@ -73,6 +72,20 @@ const quizService = {
         correctAnswerIds.every((id) => selectedIds.includes(id));
 
       if (isCorrect) correctCount++;
+
+      questionResults.push({
+        _id: question._id,
+        question: question.question,
+        questionType: question.questionType,
+        order: question.order,
+        answers: question.answers.map(a => ({
+          _id: a._id,
+          text: a.text,
+          isCorrect: a.isCorrect
+        })),
+        selectedAnswerIds: selectedIds,
+        isUserCorrect: isCorrect
+      });
     }
 
     const totalQuestions = questions.length;
@@ -119,6 +132,7 @@ const quizService = {
       passed,
       xpEarned,
       passingScore: quiz.passingScore,
+      questionResults,
     };
   },
 
