@@ -52,7 +52,7 @@ const QuizResult = ({ result, quizTitle }) => {
 
           {!passed && (
             <div className="mt-4 text-sm text-gray-600">
-              Điểm đạt: {passingScore}%
+              Điểm cần đạt: {passingScore}%
             </div>
           )}
         </div>
