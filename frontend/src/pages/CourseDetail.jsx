@@ -111,14 +111,14 @@ const CourseDetail = () => {
   };
 
   const handlePurchase = () => {
-  handleEnroll()
-    .then(() => {
-      window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank');
-    })
-    .catch((error) => {
-      console.error("Lỗi đăng ký:", error);
-    });
-};
+    handleEnroll()
+      .then(() => {
+        window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank');
+      })
+      .catch((error) => {
+        console.error("Lỗi đăng ký:", error);
+      });
+  };
 
   if (loading) return <Loading fullPage />;
   if (!course) return null;
@@ -139,6 +139,9 @@ const CourseDetail = () => {
             {course.title}
           </span>
         </div>
+        <span className="text-[#6F0D0D] text-sm font-bold tracking-[0.05em]">
+          Hoàn thành bài Quiz để nhận điểm XP đổi thưởng
+        </span>
 
         <div className="grid grid-cols-1 lg:grid-cols-[970px_341px] gap-8">
           {/* Left Column */}
@@ -147,14 +150,14 @@ const CourseDetail = () => {
             <div className="rounded-2xl p-16 relative overflow-hidden">
               {/* Background Image with Opacity */}
               {course.thumbnail && (
-                <div 
+                <div
                   className="absolute inset-0 bg-cover bg-center opacity-50"
                   style={{ backgroundImage: `url(${course.thumbnail})` }}
                 />
               )}
               {/* White overlay for better text readability */}
               <div className="absolute inset-0 bg-white/30" />
-              
+
               <div className="relative z-10">
                 {/* Dynasty Badge */}
                 <div className="inline-flex items-center bg-[#FFDDAF] rounded-full px-3 py-1 mb-2">
@@ -249,43 +252,42 @@ const CourseDetail = () => {
                       `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6F0D0D&color=fff`;
 
                     return (
-                  <div
-                    key={user.userId || user.rank}
-                    className={`flex items-center justify-between p-2 rounded-lg ${
-                      isTopRank ? 'bg-[#FFF1ED]' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {/* Rank */}
-                      <div className="w-6">
-                        <span className={`text-base font-bold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
-                          {user.rank}
-                        </span>
-                      </div>
+                      <div
+                        key={user.userId || user.rank}
+                        className={`flex items-center justify-between p-2 rounded-lg ${isTopRank ? 'bg-[#FFF1ED]' : ''
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Rank */}
+                          <div className="w-6">
+                            <span className={`text-base font-bold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                              {user.rank}
+                            </span>
+                          </div>
 
-                      {/* Avatar */}
-                      <img
-                        src={avatar}
-                        alt={displayName}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
+                          {/* Avatar */}
+                          <img
+                            src={avatar}
+                            alt={displayName}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
 
-                      {/* Name & Level */}
-                      <div>
-                        <div className={`text-sm leading-5 ${isTopRank ? 'font-normal' : 'font-normal'}`}>
-                          {displayName}
+                          {/* Name & Level */}
+                          <div>
+                            <div className={`text-sm leading-5 ${isTopRank ? 'font-normal' : 'font-normal'}`}>
+                              {displayName}
+                            </div>
+                            <div className="text-[#57413F] text-[10px] leading-[15px]">
+                              Cấp {user.level || 1} · {user.completedQuizzes || 0} quiz
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-[#57413F] text-[10px] leading-[15px]">
-                          Cấp {user.level || 1} · {user.completedQuizzes || 0} quiz
+
+                        {/* XP */}
+                        <div className={`text-base font-semibold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
+                          {(user.xp || 0).toLocaleString('vi-VN')} XP
                         </div>
                       </div>
-                    </div>
-
-                    {/* XP */}
-                    <div className={`text-base font-semibold ${isTopRank ? 'text-[#4B0003]' : 'text-[#57413F]'}`}>
-                      {(user.xp || 0).toLocaleString('vi-VN')} XP
-                    </div>
-                  </div>
                     );
                   })
                 ) : (
@@ -301,7 +303,7 @@ const CourseDetail = () => {
           <div className="lg:sticky lg:top-24 h-fit">
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-[#6F0D0D]">Sản phẩm liên quan</h2>
-              
+
               {productsLoading ? (
                 <div className="text-center py-8">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#6F0D0D] border-t-transparent"></div>

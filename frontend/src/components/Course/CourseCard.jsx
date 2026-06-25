@@ -46,7 +46,7 @@ const CourseCard = ({ course }) => {
             <span className="text-gray-500">
               👥 {course.enrolledCount || 0} học viên
             </span>
-            <span className="text-primary-600 font-semibold">Xem chi tiết →</span>
+            <span className="text-primary-600 font-semibold">Liên hệ với chúng tôi →</span>
           </div>
         </Card.Footer>
       </Card>

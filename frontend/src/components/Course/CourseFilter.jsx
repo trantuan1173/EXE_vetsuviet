@@ -1,6 +1,8 @@
 import { DYNASTIES, DIFFICULTY_LEVELS } from '../../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 const CourseFilter = ({ filters, onFilterChange }) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
       <h3 className="font-heading font-semibold text-lg mb-4">Bộ lọc</h3>
@@ -64,6 +66,20 @@ const CourseFilter = ({ filters, onFilterChange }) => {
           className="w-full text-sm text-gray-600 hover:text-primary-600 font-medium"
         >
           Xóa bộ lọc
+        </button>
+
+        <button
+          onClick={() => navigate('/shop')}
+          className="w-full sm:py-4 text-s font-bold tracking-wider text-white hover:opacity-90 transition-opacity"
+          style={{
+            backgroundColor: '#6F0D0D',
+            borderRadius: '5px',
+            fontFamily: 'Montserrat, sans-serif',
+            letterSpacing: '1.2px',
+            lineHeight: '16px',
+          }}
+        >
+          Sản phẩm
         </button>
       </div>
     </div>
