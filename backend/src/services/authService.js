@@ -102,11 +102,18 @@ const authService = {
     try {
       await emailService.sendResetPasswordEmail(user.email, resetToken);
     } catch (err) {
+      console.error('❌ SMTP Error details:', err.message);
+      console.error('❌ SMTP Error code:', err.code);
+      console.error('❌ SMTP Error response:', err.response);
+      console.error('❌ Full error:', err);
       // If email fails, clear the token
       user.resetPasswordToken = null;
       user.resetPasswordExpires = null;
       await user.save({ validateBeforeSave: false });
-      throw new Error('Không thể gửi email. Vui lòng thử lại sau.');
+      const smtpDetail = err.response || err.message || 'Unknown SMTP error';
+      const error = new Error(`Không thể gửi email: ${smtpDetail}`);
+      error.statusCode = 502;
+      throw error;
     }
   },
 
