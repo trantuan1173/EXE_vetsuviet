@@ -26,7 +26,7 @@ const createTransporter = () => {
 
 const emailService = {
   sendResetPasswordEmail: async (to, resetToken) => {
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    const clientUrl = 'https://vetsuviet.gicunhco.com';
     const resetUrl = `${clientUrl}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
