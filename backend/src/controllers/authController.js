@@ -45,6 +45,28 @@ const authController = {
     }
   },
 
+  // POST /api/auth/forgot-password
+  forgotPassword: async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      await authService.forgotPassword(email);
+      sendResponse(res, 200, true, 'Email đặt lại mật khẩu đã được gửi');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // POST /api/auth/reset-password
+  resetPassword: async (req, res, next) => {
+    try {
+      const { token, password } = req.body;
+      await authService.resetPassword(token, password);
+      sendResponse(res, 200, true, 'Mật khẩu đã được đặt lại thành công');
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // POST /api/auth/logout
   logout: async (req, res, next) => {
     try {

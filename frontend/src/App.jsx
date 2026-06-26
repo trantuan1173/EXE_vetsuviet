@@ -21,6 +21,8 @@ import Checkout from './pages/Checkout';
 import UserProfile from './pages/UserProfile';
 import NotFound from './pages/NotFound';
 import AboutUs from './pages/AboutUs';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -40,6 +42,8 @@ function PublicLayout() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/courses" element={<CourseList />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
           <Route

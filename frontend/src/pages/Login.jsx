@@ -104,6 +104,16 @@ const Login = () => {
               )}
             </div>
 
+            {/* Forgot password */}
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary-500 hover:underline"
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
+
             {/* Submit */}
             <Button
               type="submit"

@@ -14,6 +14,12 @@ router.post('/register', registerValidation, validate, authController.register);
 // POST /api/auth/login
 router.post('/login', loginValidation, validate, authController.login);
 
+// POST /api/auth/forgot-password
+router.post('/forgot-password', authController.forgotPassword);
+
+// POST /api/auth/reset-password
+router.post('/reset-password', authController.resetPassword);
+
 // POST /api/auth/logout
 router.post('/logout', authMiddleware, authController.logout);
 
