@@ -1,17 +1,26 @@
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST || 'smtp.office365.com',
-  port: parseInt(process.env.MAIL_PORT, 10) || 587,
-  secure: false, // TLS
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-  tls: {
-    ciphers: 'SSLv3',
-  },
-});
+const createTransporter = () => {
+  console.log('📧 Email config:', {
+    host: process.env.MAIL_HOST || 'smtp.office365.com',
+    port: parseInt(process.env.MAIL_PORT, 10) || 587,
+    user: process.env.MAIL_USER ? `${process.env.MAIL_USER.substring(0, 3)}***` : 'NOT SET',
+    from: process.env.MAIL_FROM ? `${process.env.MAIL_FROM.substring(0, 3)}***` : 'NOT SET',
+  });
+
+  return nodemailer.createTransport({
+    host: process.env.MAIL_HOST || 'smtp.office365.com',
+    port: parseInt(process.env.MAIL_PORT, 10) || 587,
+    secure: false, // STARTTLS
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+    tls: {
+      minVersion: 'TLSv1.2',
+    },
+  });
+};
 
 const emailService = {
   /**
@@ -68,7 +77,9 @@ const emailService = {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
+    const transporter = createTransporter();
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Reset password email sent:', info.messageId);
   },
 };
 
