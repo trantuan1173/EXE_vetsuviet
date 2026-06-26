@@ -37,6 +37,11 @@ services:
       S3_FORCE_PATH_STYLE: "true"
       VIDEO_PLAYBACK_URL_TTL_SECONDS: ${VIDEO_PLAYBACK_URL_TTL_SECONDS:-600}
       MAX_VIDEO_SIZE_BYTES: ${MAX_VIDEO_SIZE_BYTES:-5368709120}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
     ports:
       - "3456:3456"
     networks:
