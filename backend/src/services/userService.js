@@ -52,14 +52,13 @@ const userService = {
 
   // Admin: Get all users
   getAllUsers: async ({ page = 1, limit = DEFAULT_PAGE_SIZE, search }) => {
-    const query = search
-      ? {
-          $or: [
-            { fullName: { $regex: search, $options: 'i' } },
-            { email: { $regex: search, $options: 'i' } },
-          ],
-        }
-      : {};
+    const query = { role: 'user' };
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
 
     const safeLimit = Math.min(parseInt(limit), MAX_PAGE_SIZE);
     const skip = (parseInt(page) - 1) * safeLimit;

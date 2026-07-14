@@ -2,21 +2,30 @@ import { useState, useEffect } from 'react';
 import adminService from '../services/adminService';
 import AdminLayout from '../components/Layout/AdminLayout';
 import Loading from '../components/Common/Loading';
+import Pagination from '../components/Common/Pagination';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalItems: 0 });
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await adminService.getAllUsers();
+      const response = await adminService.getAllUsers({ page, limit: 10 });
       const data = response.data.data;
-      setUsers(Array.isArray(data) ? data : data.users || []);
+      if (Array.isArray(data)) {
+        setUsers(data);
+        setPagination({ currentPage: 1, totalPages: 1, totalItems: data.length });
+      } else {
+        setUsers(data.users || []);
+        setPagination(data.pagination || { currentPage: 1, totalPages: 1, totalItems: 0 });
+      }
     } catch (err) {
       console.error('Failed to fetch users');
     } finally {
@@ -33,11 +42,20 @@ const AdminUsers = () => {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   if (loading) return <AdminLayout><Loading /></AdminLayout>;
 
   return (
     <AdminLayout>
-      <h1 className="text-3xl font-bold mb-6">Quản lý người dùng</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Quản lý người dùng</h1>
+        <span className="text-sm text-gray-500">
+          Tổng: {pagination.totalItems} người dùng
+        </span>
+      </div>
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50">
@@ -71,6 +89,12 @@ const AdminUsers = () => {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={handlePageChange}
+      />
     </AdminLayout>
   );
 };
