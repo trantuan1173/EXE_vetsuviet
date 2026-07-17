@@ -141,7 +141,7 @@ const ProductCard = ({ product }) => {
             // onClick={handleAddToCart}
             onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
             disabled={product.stock === 0}
-            className="px-6 py-2 text-xs font-bold tracking-wider text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+            className="px-2 py-2 text-xs font-bold tracking-wider text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
             style={{ 
               backgroundColor: '#6f0d0d',
               borderRadius: '2px',
