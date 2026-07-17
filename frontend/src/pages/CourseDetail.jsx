@@ -187,7 +187,7 @@ const CourseDetail = () => {
                     disabled={enrolling}
                     className="bg-white text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow"
                   >
-                    Tiếp tục học
+                    Trải nghiệm miễn phí
                   </button>
                   {!isPaid && (
                     <button
@@ -345,7 +345,7 @@ const CourseDetail = () => {
                       onClick={() => window.open('https://www.facebook.com/people/V%E1%BA%BFt-S%E1%BB%AD-Vi%E1%BB%87t/61590322566391/', '_blank')}
                       className="w-full bg-[#D8A85D] text-white font-bold text-base px-6 py-3 rounded-lg shadow-[0_2px_4px_-2px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-lg hover:bg-[#c99a4d] transition-all"
                     >
-                      Mua ngay
+                      Liên hệ với chúng tôi qua Fanpage
                     </button>
                   </div>
                 ))

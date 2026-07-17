@@ -43,9 +43,9 @@ const CourseCard = ({ course }) => {
         </Card.Body>
         <Card.Footer>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">
+            {/* <span className="text-gray-500">
               👥 {course.enrolledCount || 0} học viên
-            </span>
+            </span> */}
             <span className="text-primary-600 font-semibold">Liên hệ với chúng tôi →</span>
           </div>
         </Card.Footer>

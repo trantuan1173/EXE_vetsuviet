@@ -150,7 +150,7 @@ const ProductCard = ({ product }) => {
               lineHeight: '16px'
             }}
           >
-            {product.stock > 0 ? 'MUA NGAY' : 'HẾT HÀNG'}
+            {product.stock > 0 ? 'Liên hệ với chúng tôi qua Facebook' : 'HẾT HÀNG'}
           </button>
         </div>
       </div>
