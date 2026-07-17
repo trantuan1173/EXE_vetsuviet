@@ -195,7 +195,7 @@ const CourseDetail = () => {
                       disabled={enrolling}
                       className="bg-[#FFDDAF] text-[#7C0000] font-normal text-base px-8 py-3 rounded-lg shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1),0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:shadow-lg transition-shadow disabled:opacity-50"
                     >
-                      {enrolling ? 'Đang xử lý...' : 'Mua ngay'}
+                      {enrolling ? 'Đang xử lý...' : 'Liên hệ với chúng tôi qua Facebook'}
                     </button>
                   )}
                 </div>
